@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://YOUR-NETLIFY-URL.netlify.app/sitemap.xml
+Sitemap: https://ieeecstechpath.netlify.app/sitemap.xml
