@@ -167,6 +167,24 @@ html,body{height:100%;overflow:hidden;}
 }
 .scroll-dot{animation:scrollBounce 2.4s ease infinite;}
 
+@media (max-width: 768px) {
+
+  /* Global section padding */
+  .section { padding: 24px 0; }
+
+  /* Snap scroll less aggressive on mobile */
+  .snap-wrap { scroll-snap-type: y proximity; }
+
+  /* Hero title smaller */
+  .hero-title { font-size: 72px !important; }
+
+  /* All two-column grids → single column */
+  .two-col {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+  }
+}
+
 /* ── HOVER STATES ── */
 .cta-btn{
   transition:transform 0.25s ease,box-shadow 0.25s ease,background 0.25s ease;
@@ -307,11 +325,13 @@ function Hero() {
       {/* NAV */}
       <nav
         style={{
+          flexWrap: "wrap",
+          gap: 12,
+          padding: "16px 20px",
           position: "absolute",
           top: 0,
           left: 0,
           right: 0,
-          padding: "28px 48px",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
@@ -570,7 +590,7 @@ function FilmStrip() {
   const Card = ({ s }) => (
     <div
       style={{
-        width: 170,
+        width: "clamp(130px, 22vw, 170px)",
         flexShrink: 0,
         marginRight: 10,
         border: "1px solid rgba(245,166,35,0.12)",
@@ -735,10 +755,11 @@ function AboutIEEE() {
       style={{ background: "var(--bg)" }}
     >
       <div
+        className="two-col"
         style={{
           maxWidth: 1200,
           margin: "0 auto",
-          padding: "0 56px",
+          padding: "0 clamp(20px, 5vw, 56px)",
           display: "grid",
           gridTemplateColumns: "1fr 1fr",
           gap: 80,
@@ -1036,7 +1057,7 @@ function IEEEBranch() {
         style={{
           maxWidth: 1200,
           margin: "0 auto",
-          padding: "0 56px",
+          padding: "0 clamp(20px, 5vw, 56px)",
           width: "100%",
         }}
       >
@@ -1055,6 +1076,7 @@ function IEEEBranch() {
           IEEE Computer Society · UJ Branch · Est. 2017
         </span>
         <div
+          className="two-col"
           style={{
             display: "grid",
             gridTemplateColumns: "1fr 1fr",
@@ -1201,7 +1223,7 @@ function AboutEvent() {
         style={{
           maxWidth: 1200,
           margin: "0 auto",
-          padding: "0 56px",
+          padding: "0 clamp(20px, 5vw, 56px)",
           width: "100%",
         }}
       >
@@ -1252,6 +1274,7 @@ function AboutEvent() {
         </div>
 
         <div
+          className="two-col"
           style={{
             display: "grid",
             gridTemplateColumns: "1fr 1fr",
@@ -1305,6 +1328,7 @@ function AboutEvent() {
           </div>
 
           <div
+            className="two-col"
             style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}
           >
             {details.map((d, i) => (
@@ -1431,7 +1455,7 @@ function Keynotes() {
         style={{
           maxWidth: 1200,
           margin: "0 auto",
-          padding: "0 56px",
+          padding: "0 clamp(20px, 5vw, 56px)",
           width: "100%",
         }}
       >
@@ -1462,7 +1486,7 @@ function Keynotes() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "1fr 1fr 1fr",
+            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
             gap: 18,
           }}
         >
@@ -1764,11 +1788,12 @@ function Panel() {
         style={{
           maxWidth: 1200,
           margin: "0 auto",
-          padding: "0 56px",
+          padding: "0 clamp(20px, 5vw, 56px)",
           width: "100%",
         }}
       >
         <div
+          className="two-col"
           style={{
             display: "grid",
             gridTemplateColumns: "1fr 1fr",
@@ -1847,6 +1872,7 @@ function Panel() {
 
           {/* Right — bento cards */}
           <div
+            className="two-col"
             style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}
           >
             {/* Tall left card — first panelist */}
@@ -2091,7 +2117,7 @@ function Agenda() {
         style={{
           maxWidth: 1200,
           margin: "0 auto",
-          padding: "0 56px",
+          padding: "0 clamp(20px, 5vw, 56px)",
           width: "100%",
         }}
       >
@@ -2120,6 +2146,7 @@ function Agenda() {
           </h2>
         </div>
         <div
+          className="two-col"
           style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}
         >
           {items.map((item, i) => (
@@ -2218,12 +2245,17 @@ function Outcomes() {
     },
   ];
   return (
-    <section className="section" style={{ background: "var(--bg)" }} ref={ref}>
+    <section
+      className="section"
+      id="outcomes"
+      style={{ background: "var(--bg)" }}
+      ref={ref}
+    >
       <div
         style={{
           maxWidth: 1200,
           margin: "0 auto",
-          padding: "0 56px",
+          padding: "0 clamp(20px, 5vw, 56px)",
           width: "100%",
         }}
       >
@@ -2330,29 +2362,33 @@ function Outcomes() {
 /* ─────────────────────────────────────── */
 function Footer() {
   const socials = [
-    { name: "Instagram", handle: "@ieee.cs.ju" },
-    { name: "LinkedIn", handle: "@IEEE Computer Society JU" },
-    { name: "Facebook", handle: "@IEEE Computer Society JU" },
-    { name: "Email", handle: "ahmadmadisafi9@ieee.org" },
-  ];
-  const cols = [
     {
-      cat: "Events",
-      links: ["Upcoming Sessions", "Past Highlights", "Event Calendar"],
+      name: "Instagram",
+      handle: "@ieee.cs.uj",
+      url: "https://www.instagram.com/ieee.cs.uj/",
     },
     {
-      cat: "Speakers",
-      links: ["Meet The Experts", "Speaker Lineup", "Become A Speaker"],
+      name: "LinkedIn",
+      handle: "@IEEE CS UJ",
+      url: "https://www.linkedin.com/in/ieee-computer-society-uj-3bb5a3258/",
     },
     {
-      cat: "Community",
-      links: ["Join A Community", "Meetups & Circles", "One-On-One Matching"],
-    },
-    {
-      cat: "Organization",
-      links: ["Support Center", "Partnership Inquiry", "Press & Media"],
+      name: "Facebook",
+      handle: "@IEEECSJU",
+      url: "https://www.facebook.com/IEEECSJU",
     },
   ];
+
+  const sections = [
+    { label: "About IEEE", id: "about" },
+    { label: "Keynotes", id: "keynotes" },
+    { label: "Panel", id: "panel" },
+    { label: "Agenda", id: "agenda" },
+    { label: "Outcomes", id: "outcomes" },
+  ];
+
+  const scrollTo = (id) =>
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
 
   return (
     <section
@@ -2362,148 +2398,52 @@ function Footer() {
         flexDirection: "column",
         alignItems: "stretch",
         justifyContent: "center",
-        overflowY: "auto",
       }}
     >
-      {/* ← single wrapper that owns all the vertical space */}
       <div
         style={{
           width: "100%",
+          maxWidth: 1200,
+          margin: "0 auto",
+          padding: "0 48px",
           display: "flex",
           flexDirection: "column",
-          justifyContent: "center",
+          gap: 0,
         }}
       >
-        {/* Socials row */}
+        {/* Top — brand + nav + socials */}
         <div
+          className="two-col"
           style={{
             display: "grid",
-            gridTemplateColumns: "1fr 1fr 1fr 1fr",
-            borderBottom: "1px solid rgba(245,166,35,0.07)",
-          }}
-        >
-          {socials.map((s, i) => (
-            <div
-              key={i}
-              className="social-cell"
-              style={{
-                padding: "20px 32px",
-                borderRight: i < 3 ? "1px solid rgba(245,166,35,0.07)" : "none",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <div>
-                <div
-                  style={{
-                    fontFamily: "'Bebas Neue'",
-                    fontSize: 18,
-                    color: "var(--cream)",
-                    letterSpacing: "0.06em",
-                  }}
-                >
-                  {s.name}
-                </div>
-                <div
-                  style={{
-                    fontFamily: "'DM Sans'",
-                    fontSize: 11,
-                    color: "var(--muted)",
-                    marginTop: 2,
-                  }}
-                >
-                  {s.handle}
-                </div>
-              </div>
-              <span
-                style={{ color: "var(--gold)", fontSize: 16, opacity: 0.7 }}
-              >
-                ↗
-              </span>
-            </div>
-          ))}
-        </div>
-
-        {/* Nav grid */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr 1fr 1fr",
-            padding: "28px 0",
-            borderBottom: "1px solid rgba(245,166,35,0.06)",
-          }}
-        >
-          {cols.map((col, i) => (
-            <div
-              key={i}
-              style={{
-                padding: "0 32px",
-                borderRight: i < 3 ? "1px solid rgba(245,166,35,0.05)" : "none",
-              }}
-            >
-              <div
-                style={{
-                  fontFamily: "'DM Sans'",
-                  fontSize: 10,
-                  color: "var(--gold)",
-                  letterSpacing: "0.2em",
-                  textTransform: "uppercase",
-                  marginBottom: 12,
-                }}
-              >
-                {col.cat}
-              </div>
-              {col.links.map((link, j) => (
-                <div
-                  key={j}
-                  className="footer-link"
-                  style={{
-                    fontFamily: "'Syne'",
-                    fontWeight: 600,
-                    fontSize: 12,
-                    letterSpacing: "0.06em",
-                    textTransform: "uppercase",
-                    marginBottom: 9,
-                  }}
-                >
-                  {link}
-                </div>
-              ))}
-            </div>
-          ))}
-        </div>
-
-        {/* Bottom bar */}
-        <div
-          style={{
-            padding: "22px 32px",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
+            gridTemplateColumns: "1fr 1fr 1fr",
+            gap: 48,
+            paddingBottom: 40,
+            borderBottom: "1px solid rgba(245,166,35,0.08)",
+            alignItems: "start",
           }}
         >
           {/* Brand */}
-          <div style={{ maxWidth: 260 }}>
+          <div>
             <div
               style={{
                 display: "flex",
                 alignItems: "center",
                 gap: 10,
-                marginBottom: 10,
+                marginBottom: 14,
               }}
             >
               <div
                 style={{
-                  width: 32,
-                  height: 32,
+                  width: 36,
+                  height: 36,
                   borderRadius: 8,
                   background: "var(--gold)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   fontFamily: "'Bebas Neue'",
-                  fontSize: 13,
+                  fontSize: 14,
                   color: "#040100",
                 }}
               >
@@ -2512,7 +2452,7 @@ function Footer() {
               <div
                 style={{
                   fontFamily: "'Bebas Neue'",
-                  fontSize: 17,
+                  fontSize: 20,
                   color: "var(--cream)",
                   letterSpacing: "0.1em",
                 }}
@@ -2525,98 +2465,180 @@ function Footer() {
                 fontFamily: "'DM Sans'",
                 fontSize: 12,
                 color: "var(--muted)",
-                lineHeight: 1.7,
+                lineHeight: 1.8,
               }}
             >
-              Whether you lead teams or just launched your career — Tech Path
-              helps you grow through live events, expert insights, and real
-              interaction.
+              IEEE Computer Society · University of Jordan
+              <br />
+              28 April 2026 · Allouzi Theatre
             </p>
           </div>
 
-          {/* Contact */}
-          <div style={{ textAlign: "center" }}>
-            <div
-              style={{
-                fontFamily: "'DM Sans'",
-                fontSize: 11,
-                color: "var(--gold)",
-                letterSpacing: "0.18em",
-                textTransform: "uppercase",
-                marginBottom: 5,
-              }}
-            >
-              Vice Chair
-            </div>
-            <div
-              style={{
-                fontFamily: "'Syne'",
-                fontWeight: 700,
-                color: "var(--cream)",
-                fontSize: 13,
-              }}
-            >
-              sura7mdallal@gmail.com
-            </div>
-          </div>
-
-          {/* Newsletter */}
+          {/* Section navigation */}
           <div>
             <div
               style={{
-                fontFamily: "'Syne'",
-                fontWeight: 700,
-                fontSize: 16,
-                color: "var(--cream)",
-                marginBottom: 12,
+                fontFamily: "'DM Sans'",
+                fontSize: 10,
+                color: "var(--gold)",
+                letterSpacing: "0.22em",
+                textTransform: "uppercase",
+                marginBottom: 16,
               }}
             >
-              Newsletter
+              Navigate
             </div>
-            <div style={{ display: "flex", gap: 8 }}>
-              <input
-                placeholder="your@email.com"
+            {sections.map((s) => (
+              <div
+                key={s.id}
+                onClick={() => scrollTo(s.id)}
+                className="footer-link"
                 style={{
-                  background: "rgba(245,166,35,0.05)",
-                  border: "1px solid rgba(245,166,35,0.2)",
-                  borderRadius: 8,
-                  padding: "10px 14px",
-                  fontFamily: "'DM Sans'",
-                  fontSize: 13,
-                  color: "var(--cream)",
-                  width: 190,
-                  outline: "none",
-                }}
-              />
-              <button
-                className="cta-btn"
-                style={{
-                  background: "var(--gold)",
-                  color: "#040100",
                   fontFamily: "'Syne'",
-                  fontWeight: 700,
-                  fontSize: 12,
-                  letterSpacing: "0.1em",
-                  padding: "10px 16px",
-                  borderRadius: 8,
-                  border: "none",
+                  fontWeight: 600,
+                  fontSize: 13,
+                  letterSpacing: "0.06em",
                   textTransform: "uppercase",
+                  marginBottom: 11,
+                  cursor: "pointer",
                 }}
               >
-                Subscribe
-              </button>
+                {s.label}
+              </div>
+            ))}
+          </div>
+
+          {/* Socials + contact */}
+          <div>
+            <div
+              style={{
+                fontFamily: "'DM Sans'",
+                fontSize: 10,
+                color: "var(--gold)",
+                letterSpacing: "0.22em",
+                textTransform: "uppercase",
+                marginBottom: 16,
+              }}
+            >
+              Connect
+            </div>
+            {socials.map((s, i) => (
+              <a
+                key={i}
+                href={s.url}
+                target="_blank"
+                rel="noreferrer"
+                style={{
+                  textDecoration: "none",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  marginBottom: 12,
+                }}
+              >
+                <div>
+                  <div
+                    style={{
+                      fontFamily: "'Syne'",
+                      fontWeight: 600,
+                      fontSize: 13,
+                      color: "var(--cream)",
+                      letterSpacing: "0.04em",
+                    }}
+                  >
+                    {s.name}
+                  </div>
+                  <div
+                    style={{
+                      fontFamily: "'DM Sans'",
+                      fontSize: 11,
+                      color: "var(--muted)",
+                      marginTop: 1,
+                    }}
+                  >
+                    {s.handle}
+                  </div>
+                </div>
+                <span
+                  style={{ color: "var(--gold)", fontSize: 14, opacity: 0.6 }}
+                >
+                  ↗
+                </span>
+              </a>
+            ))}
+
+            {/* Divider */}
+            <div
+              style={{
+                height: 1,
+                background: "rgba(245,166,35,0.08)",
+                margin: "16px 0",
+              }}
+            />
+
+            {/* Contacts */}
+            <div style={{ marginBottom: 10 }}>
+              <div
+                style={{
+                  fontFamily: "'DM Sans'",
+                  fontSize: 10,
+                  color: "var(--gold)",
+                  letterSpacing: "0.16em",
+                  textTransform: "uppercase",
+                  marginBottom: 4,
+                }}
+              >
+                Chair
+              </div>
+              <a
+                href="mailto:ahmadmadisafi9@ieee.org"
+                style={{
+                  fontFamily: "'DM Sans'",
+                  fontSize: 12,
+                  color: "var(--muted)",
+                  textDecoration: "none",
+                }}
+              >
+                ahmadmadisafi9@ieee.org
+              </a>
+            </div>
+            <div>
+              <div
+                style={{
+                  fontFamily: "'DM Sans'",
+                  fontSize: 10,
+                  color: "var(--gold)",
+                  letterSpacing: "0.16em",
+                  textTransform: "uppercase",
+                  marginBottom: 4,
+                }}
+              >
+                Vice Chair
+              </div>
+              <a
+                href="mailto:sura7mdallal@gmail.com"
+                style={{
+                  fontFamily: "'DM Sans'",
+                  fontSize: 12,
+                  color: "var(--muted)",
+                  textDecoration: "none",
+                }}
+              >
+                sura7mdallal@gmail.com
+              </a>
             </div>
           </div>
         </div>
 
-        {/* Copyright */}
+        {/* Bottom copyright */}
         <div
           style={{
-            padding: "12px 32px",
-            borderTop: "1px solid rgba(245,166,35,0.05)",
+            paddingTop: 24,
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
+            flexWrap: "wrap",
+            gap: 10,
           }}
         >
           <span
@@ -2629,17 +2651,6 @@ function Footer() {
             © 2026 IEEE Computer Society · University of Jordan · All Rights
             Reserved
           </span>
-          <div style={{ display: "flex", gap: 22 }}>
-            {["Privacy Policy", "Terms of Service"].map((l, i) => (
-              <span
-                key={i}
-                className="footer-link"
-                style={{ fontFamily: "'DM Sans'", fontSize: 11 }}
-              >
-                {l}
-              </span>
-            ))}
-          </div>
           <span
             style={{
               fontFamily: "'DM Sans'",
@@ -2651,7 +2662,6 @@ function Footer() {
           </span>
         </div>
       </div>
-      {/* end centering wrapper */}
     </section>
   );
 }
