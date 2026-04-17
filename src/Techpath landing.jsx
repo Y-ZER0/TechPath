@@ -48,25 +48,20 @@ html,body{height:100%;overflow:hidden;}
   overflow-y:scroll;
   scroll-snap-type:y mandatory;
   scroll-behavior:smooth;
+  -webkit-overflow-scrolling:touch;
   background:var(--bg);
-
-  /* Slow cinematic snap — webkit only, but sets the tone */
-  -webkit-overflow-scrolling: touch;
 }
-
 .snap-wrap::-webkit-scrollbar{display:none;}
 
 /* Slow the snap itself via scroll-snap-stop */
 .section{
   scroll-snap-align:start;
-  scroll-snap-stop:always;   /* force stop at every section, no skipping */
-  height:100vh;
+  scroll-snap-stop:always;
+  min-height:100vh;
   position:relative;
   overflow:hidden;
   display:flex;
   align-items:center;
-  /* Deceleration transition illusion via content fade */
-  transition:opacity 0.1s ease;
 }
 
 @supports (scroll-timeline: none) {
@@ -167,22 +162,38 @@ html,body{height:100%;overflow:hidden;}
 }
 .scroll-dot{animation:scrollBounce 2.4s ease infinite;}
 
-@media (max-width: 768px) {
+@media (max-width:768px){
 
-  /* Global section padding */
-  .section { padding: 24px 0; }
+  html,body{overflow:hidden;}
 
-  /* Snap scroll less aggressive on mobile */
-  .snap-wrap { scroll-snap-type: y proximity; }
-
-  /* Hero title smaller */
-  .hero-title { font-size: 72px !important; }
-
-  /* All two-column grids → single column */
-  .two-col {
-    grid-template-columns: 1fr !important;
-    gap: 32px !important;
+  /* Looser snap so tall sections don't trap the user */
+  .snap-wrap{
+    scroll-snap-type:y proximity;
+    overflow-y:scroll;
   }
+
+  /* Sections grow with content, no fixed viewport jail */
+  .section{
+    scroll-snap-align:start;
+    scroll-snap-stop:normal;
+    min-height:100vh;
+    height:auto !important;
+    overflow:visible;
+    padding:60px 0 40px;
+    align-items:flex-start;
+  }
+
+  /* All two-column grids collapse */
+  .two-col{
+    grid-template-columns:1fr !important;
+    gap:28px !important;
+  }
+
+  /* Three-col keynotes already uses auto-fit — keep it */
+
+  /* Hide the flip card cluster on mobile, show stacked list instead */
+  .flip-cluster{ display:none !important; }
+  .flip-mobile { display:flex !important; }
 }
 
 /* ── HOVER STATES ── */
@@ -488,7 +499,7 @@ function Hero() {
             >
               Save My Spot
             </button>
-            <button
+            {/* <button
               className="ghost-btn"
               style={{
                 background: "transparent",
@@ -504,7 +515,7 @@ function Hero() {
               }}
             >
               Learn More
-            </button>
+            </button> */}
           </div>
         )}
       </div>
@@ -844,7 +855,11 @@ function AboutIEEE() {
 
         {/* Right: asymmetric award cards */}
         {/* Right: 3D flip award cards */}
-        <div style={{ position: "relative", height: 680 }}>
+        {/* Desktop flip cards */}
+        <div
+          className="flip-cluster"
+          style={{ position: "relative", height: 680 }}
+        >
           {[
             {
               top: -10,
@@ -853,12 +868,10 @@ function AboutIEEE() {
               h: 380,
               rot: "-3deg",
               delay: 0.35,
-              // FRONT
               frontBg: "linear-gradient(145deg,#2A1500,#150800)",
               frontTitle: "CS",
               frontSub: "Computer Society",
-              // BACK — group photo + description
-              backImg: imgIEEE_CS, // replace with your imported group photo
+              backImg: imgIEEE_CS,
               backTitle: "IEEE CS · UJ Branch",
               backDesc:
                 "A student-led club dedicated to computer science and technology at the University of Jordan since 2017.",
@@ -915,7 +928,6 @@ function AboutIEEE() {
               }}
             >
               <div className="flip-inner">
-                {/* FRONT */}
                 <div
                   className="flip-front"
                   style={{
@@ -951,8 +963,6 @@ function AboutIEEE() {
                     {c.frontSub}
                   </div>
                 </div>
-
-                {/* BACK */}
                 <div
                   className="flip-back"
                   style={{
@@ -960,7 +970,6 @@ function AboutIEEE() {
                     background: "#0D0500",
                   }}
                 >
-                  {/* Image fills the FULL back */}
                   <img
                     src={c.backImg}
                     alt={c.backTitle}
@@ -972,17 +981,15 @@ function AboutIEEE() {
                       display: "block",
                     }}
                   />
-                  {/* Dark gradient scrim over the bottom third so text is readable */}
                   <div
                     style={{
                       position: "absolute",
                       inset: 0,
                       background:
-                        "linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(8,3,0,0.6) 50%, rgba(8,3,0,0.92) 100%)",
+                        "linear-gradient(to bottom,rgba(0,0,0,0.1) 0%,rgba(8,3,0,0.6) 50%,rgba(8,3,0,0.92) 100%)",
                       pointerEvents: "none",
                     }}
                   />
-                  {/* Text pinned to bottom */}
                   <div
                     style={{
                       position: "absolute",
@@ -1014,6 +1021,99 @@ function AboutIEEE() {
                       {c.backDesc}
                     </div>
                   </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Mobile stacked cards — hidden on desktop */}
+        <div
+          className="flip-mobile"
+          style={{
+            display: "none",
+            flexDirection: "column",
+            gap: 14,
+            width: "100%",
+          }}
+        >
+          {[
+            {
+              img: imgIEEE_CS,
+              title: "IEEE CS · UJ Branch",
+              sub: "Student-led club at University of Jordan since 2017.",
+            },
+            {
+              img: imgOutstanding,
+              title: "Outstanding Chapter 2023",
+              sub: "1st in the Middle East to receive this honor.",
+            },
+            {
+              img: imgRegion_8,
+              title: "Best Chapter Region 8",
+              sub: "IEEE Region 8 Award — Bordeaux, France 2024.",
+            },
+          ].map((c, i) => (
+            <div
+              key={i}
+              style={{
+                borderRadius: 16,
+                overflow: "hidden",
+                position: "relative",
+                height: 180,
+                border: "1px solid rgba(245,166,35,0.14)",
+                opacity: v ? 1 : 0,
+                transform: v ? "translateY(0)" : "translateY(20px)",
+                transition: `all 0.8s ease ${0.2 + i * 0.15}s`,
+              }}
+            >
+              <img
+                src={c.img}
+                alt={c.title}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  objectPosition: "center top",
+                }}
+              />
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  background:
+                    "linear-gradient(to bottom,transparent 30%,rgba(8,3,0,0.92) 100%)",
+                }}
+              />
+              <div
+                style={{
+                  position: "absolute",
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  padding: "12px 14px",
+                }}
+              >
+                <div
+                  style={{
+                    fontFamily: "'Syne'",
+                    fontWeight: 700,
+                    fontSize: 13,
+                    color: "var(--gold)",
+                  }}
+                >
+                  {c.title}
+                </div>
+                <div
+                  style={{
+                    fontFamily: "'DM Sans'",
+                    fontSize: 11,
+                    color: "rgba(245,235,220,0.75)",
+                    marginTop: 3,
+                    lineHeight: 1.5,
+                  }}
+                >
+                  {c.sub}
                 </div>
               </div>
             </div>
@@ -1882,7 +1982,8 @@ function Panel() {
                 gridRow: "1 / 3",
                 borderRadius: 20,
                 border: "1px solid rgba(245,166,35,0.14)",
-                height: 574, // ← fixed: matches 2 × 280 + 14gap
+                height: window.innerWidth < 768 ? "auto" : 574,
+                minHeight: 280,
                 overflow: "hidden",
                 position: "relative",
                 background: panelists[0].bg,
@@ -2284,6 +2385,7 @@ function Outcomes() {
           </h2>
         </div>
         <div
+          className="two-col"
           style={{
             display: "grid",
             gridTemplateColumns: "1fr 1fr",
@@ -2405,7 +2507,7 @@ function Footer() {
           width: "100%",
           maxWidth: 1200,
           margin: "0 auto",
-          padding: "0 48px",
+          padding: "0 clamp(20px, 5vw, 48px)",
           display: "flex",
           flexDirection: "column",
           gap: 0,
