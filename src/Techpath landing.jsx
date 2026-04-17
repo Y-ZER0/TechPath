@@ -194,6 +194,8 @@ html,body{height:100%;overflow:hidden;}
   /* Hide the flip card cluster on mobile, show stacked list instead */
   .flip-cluster{ display:none !important; }
   .flip-mobile { display:flex !important; }
+
+  .yazan-img { object-position: 10% 45% !important; }
 }
 
 /* ── HOVER STATES ── */
@@ -1977,7 +1979,7 @@ function Panel() {
           >
             {/* Tall left card — first panelist */}
             <div
-              className="card"
+              className="card panel-tall"
               style={{
                 gridRow: "1 / 3",
                 borderRadius: 20,
@@ -1994,6 +1996,7 @@ function Panel() {
                 <img
                   src={panelists[0].img}
                   alt={panelists[0].name}
+                  className="yazan-img"
                   style={{
                     position: "absolute",
                     inset: 0,
@@ -2059,8 +2062,8 @@ function Panel() {
                 <div
                   style={{
                     fontFamily: "'DM Sans'",
-                    fontSize: 12,
-                    color: "var(--muted)",
+                    fontSize: 11,
+                    color: "rgba(220,210,195,0.9)",
                     marginTop: 8,
                     lineHeight: 1.65,
                   }}
