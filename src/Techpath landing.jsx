@@ -460,7 +460,7 @@ function Hero() {
                 textTransform: "uppercase",
               }}
             >
-              28 April 2026 · Allouzi Theatre · University of Jordan
+              27 – 29 April 2026 · Online Webinar · 3 Days
             </p>
             <div
               style={{
@@ -689,7 +689,7 @@ function FilmStrip() {
     </div>
   );
 
-  const words = ["CONFERENCES", "LECTURES", "WORKSHOPS", "KEYNOTES", "PANELS"];
+  const words = ["LECTURES", "WORKSHOPS", "KEYNOTES", "PANELS"];
   const wordsD = [...words, ...words, ...words, ...words];
 
   return (
@@ -1314,10 +1314,10 @@ function IEEEBranch() {
 function AboutEvent() {
   const [ref, v] = useInView(0.25);
   const details = [
-    { icon: "◈", label: "Date", value: "28 April 2026" },
-    { icon: "◷", label: "Time", value: "11:00 AM – 3:30 PM" },
-    { icon: "◉", label: "Venue", value: "Allouzi Theatre, UJ" },
-    { icon: "◈", label: "Capacity", value: "350 – 400 Attendees" },
+    { icon: "◈", label: "Format", value: "Online Webinar" },
+    { icon: "◷", label: "Duration", value: "3 Hours / Session" },
+    { icon: "◉", label: "Days", value: "27 – 29 April 2026" },
+    { icon: "◈", label: "Access", value: "Free · Open To All" },
   ];
   return (
     <section className="section" style={{ background: "var(--bg)" }} ref={ref}>
@@ -1329,7 +1329,6 @@ function AboutEvent() {
           width: "100%",
         }}
       >
-        {/* Tags row */}
         <div
           style={{
             display: "flex",
@@ -1350,11 +1349,11 @@ function AboutEvent() {
           >
             Event Overview
           </span>
-          <div style={{ display: "flex", gap: 10 }}>
+          <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
             {[
-              "Software Engineering",
-              "Cybersecurity",
-              "Artificial Intelligence",
+              "27 Apr · Cybersecurity",
+              "28 Apr · AI",
+              "29 Apr · Software Eng.",
             ].map((t, i) => (
               <span
                 key={i}
@@ -1408,10 +1407,9 @@ function AboutEvent() {
                 marginTop: 26,
               }}
             >
-              A learning-focused experience designed to introduce participants
-              to three major IT fields in a clear and practical way. It features
-              three keynote sessions where industry experts explain how each
-              field works in real-world scenarios.
+              A 3-day online webinar series designed to introduce participants
+              to three major IT fields in a clear and practical way. Each day
+              features a dedicated 3-hour session led by an industry expert.
             </p>
             <p
               style={{
@@ -1423,9 +1421,9 @@ function AboutEvent() {
                 marginTop: 14,
               }}
             >
-              The event also includes a panel discussion on the IT job market,
-              offering insights into career opportunities, required skills, and
-              industry expectations.
+              The series concludes with a panel discussion on the IT job market,
+              offering real insights into career opportunities, required skills,
+              and what employers actually look for in 2026.
             </p>
           </div>
 
@@ -2181,26 +2179,77 @@ function Panel() {
 /* ─────────────────────────────────────── */
 function Agenda() {
   const [ref, v] = useInView(0.2);
-  const items = [
-    { time: "11:30 – 11:45", title: "Opening & Welcome", type: "open" },
+
+  const days = [
     {
-      time: "11:45 – 12:30",
-      title: "Software Engineering Keynote",
-      sub: "incl. Q&A",
-      type: "key",
+      date: "27 April 2026",
+      label: "Day 1",
+      field: "Cybersecurity",
+      color: "#2ECC71",
+      items: [
+        { time: "5:00 – 5:15 PM", title: "Opening & Welcome", type: "open" },
+        {
+          time: "5:15 – 6:45 PM",
+          title: "Cybersecurity Keynote",
+          sub: "Aladdin Dandis · incl. Q&A",
+          type: "key",
+        },
+        { time: "6:45 – 7:00 PM", title: "Break", type: "brk" },
+        {
+          time: "7:00 – 8:00 PM",
+          title: "Panel: IT Job Market 2026",
+          sub: "Skills, Reality & Opportunities",
+          type: "pnl",
+        },
+        { time: "8:00 – 8:15 PM", title: "Closing & Q&A", type: "cls" },
+      ],
     },
     {
-      time: "12:30 – 1:15",
-      title: "Cybersecurity Keynote",
-      sub: "incl. Q&A",
-      type: "key",
+      date: "28 April 2026",
+      label: "Day 2",
+      field: "Artificial Intelligence",
+      color: "#9B59B6",
+      items: [
+        { time: "5:00 – 5:10 PM", title: "Day 2 Opening", type: "open" },
+        {
+          time: "5:10 – 6:40 PM",
+          title: "AI Keynote",
+          sub: "Abdullah Alghwairi · incl. Q&A",
+          type: "key",
+        },
+        { time: "6:40 – 6:55 PM", title: "Break", type: "brk" },
+        {
+          time: "6:55 – 7:45 PM",
+          title: "Kahoot Activity + Discussion",
+          type: "act",
+        },
+        { time: "7:45 – 8:00 PM", title: "Closing", type: "cls" },
+      ],
     },
-    { time: "1:15 – 1:30", title: "Coffee Break", type: "brk" },
-    { time: "1:30 – 2:15", title: "AI Keynote", sub: "incl. Q&A", type: "key" },
-    { time: "2:15 – 2:30", title: "Kahoot Activity", type: "act" },
-    { time: "2:30 – 3:15", title: "Panel Discussion", type: "pnl" },
-    { time: "3:15 – 3:25", title: "Closing", type: "cls" },
+    {
+      date: "29 April 2026",
+      label: "Day 3",
+      field: "Software Engineering",
+      color: "#E8891A",
+      items: [
+        { time: "5:00 – 5:10 PM", title: "Day 3 Opening", type: "open" },
+        {
+          time: "5:10 – 6:40 PM",
+          title: "Software Engineering Keynote",
+          sub: "Mohammed Abu-Hadhoud · incl. Q&A",
+          type: "key",
+        },
+        { time: "6:40 – 6:55 PM", title: "Break", type: "brk" },
+        { time: "6:55 – 7:45 PM", title: "Open Q&A + Networking", type: "pnl" },
+        {
+          time: "7:45 – 8:00 PM",
+          title: "Series Closing Ceremony",
+          type: "cls",
+        },
+      ],
+    },
   ];
+
   const tc = {
     open: "#F5A623",
     key: "#E8891A",
@@ -2235,7 +2284,7 @@ function Agenda() {
               textTransform: "uppercase",
             }}
           >
-            28 April 2026
+            27 – 29 April 2026
           </span>
           <h2
             style={{
@@ -2249,69 +2298,132 @@ function Agenda() {
             EVENT <span style={{ color: "var(--gold)" }}>AGENDA</span>
           </h2>
         </div>
+
         <div
           className="two-col"
-          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr 1fr",
+            gap: 18,
+          }}
         >
-          {items.map((item, i) => (
+          {days.map((day, di) => (
             <div
-              key={i}
+              key={di}
               style={{
-                display: "flex",
-                gap: 18,
-                padding: "16px 18px",
-                borderRadius: 12,
-                background: "rgba(245,166,35,0.025)",
-                border: "1px solid rgba(245,166,35,0.07)",
-                alignItems: "center",
+                borderRadius: 16,
+                border: `1px solid ${day.color}22`,
+                background: "rgba(245,166,35,0.02)",
+                overflow: "hidden",
                 opacity: v ? 1 : 0,
-                transform: v ? "translateX(0)" : "translateX(-18px)",
-                transition: `all 0.7s ease ${0.1 + i * 0.06}s`,
+                transform: v ? "translateY(0)" : "translateY(24px)",
+                transition: `all 0.8s ease ${0.1 + di * 0.14}s`,
               }}
             >
-              <span
-                style={{
-                  fontFamily: "'DM Sans'",
-                  fontSize: 12,
-                  color: "var(--muted)",
-                  whiteSpace: "nowrap",
-                  minWidth: 112,
-                }}
-              >
-                {item.time}
-              </span>
+              {/* Day header */}
               <div
                 style={{
-                  width: 3,
-                  height: 30,
-                  borderRadius: 2,
-                  background: tc[item.type],
-                  flexShrink: 0,
+                  padding: "14px 18px",
+                  borderBottom: `1px solid ${day.color}22`,
+                  background: `${day.color}08`,
                 }}
-              />
-              <div>
+              >
+                <div
+                  style={{
+                    fontFamily: "'Bebas Neue'",
+                    fontSize: 11,
+                    color: day.color,
+                    letterSpacing: "0.2em",
+                  }}
+                >
+                  {day.label}
+                </div>
                 <div
                   style={{
                     fontFamily: "'Syne'",
                     fontWeight: 700,
                     color: "var(--cream)",
-                    fontSize: 14,
+                    fontSize: 15,
+                    marginTop: 2,
                   }}
                 >
-                  {item.title}
+                  {day.field}
                 </div>
-                {item.sub && (
+                <div
+                  style={{
+                    fontFamily: "'DM Sans'",
+                    fontSize: 11,
+                    color: "var(--muted)",
+                    marginTop: 2,
+                  }}
+                >
+                  {day.date}
+                </div>
+              </div>
+
+              {/* Items */}
+              <div style={{ padding: "10px 0" }}>
+                {day.items.map((item, ii) => (
                   <div
+                    key={ii}
                     style={{
-                      fontFamily: "'DM Sans'",
-                      fontSize: 11,
-                      color: tc[item.type],
-                      marginTop: 2,
+                      display: "flex",
+                      gap: 14,
+                      padding: "10px 18px",
+                      alignItems: "flex-start",
+                      borderBottom:
+                        ii < day.items.length - 1
+                          ? "1px solid rgba(245,166,35,0.05)"
+                          : "none",
                     }}
                   >
-                    {item.sub}
+                    <div
+                      style={{
+                        width: 3,
+                        borderRadius: 2,
+                        background: tc[item.type],
+                        flexShrink: 0,
+                        alignSelf: "stretch",
+                        minHeight: 20,
+                      }}
+                    />
+                    <div style={{ flex: 1 }}>
+                      <div
+                        style={{
+                          fontFamily: "'DM Sans'",
+                          fontSize: 10,
+                          color: "var(--muted)",
+                          marginBottom: 2,
+                        }}
+                      >
+                        {item.time}
+                      </div>
+                      <div
+                        style={{
+                          fontFamily: "'Syne'",
+                          fontWeight: 700,
+                          color: "var(--cream)",
+                          fontSize: 13,
+                        }}
+                      >
+                        {item.title}
+                      </div>
+                      {item.sub && (
+                        <div
+                          style={{
+                            fontFamily: "'DM Sans'",
+                            fontSize: 11,
+                            color: tc[item.type],
+                            marginTop: 2,
+                            lineHeight: 1.4,
+                          }}
+                        >
+                          {item.sub}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                )}
+                ))}
               </div>
             </div>
           ))}
@@ -2575,7 +2687,7 @@ function Footer() {
             >
               IEEE Computer Society · University of Jordan
               <br />
-              28 April 2026 · Allouzi Theatre
+              27 – 29 April 2026 · Online Webinar
             </p>
           </div>
 
