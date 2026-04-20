@@ -1,29 +1,31 @@
 import { useState, useEffect, useRef } from "react";
-import { useHeroCanvas } from "./HeroCanvas"; // adjust path as needed
+import { useHeroCanvas } from "./HeroCanvas";
 
-// Speakers
-import imgAbuHadhoud from "./assets/speakers/abu-hadhoud.jpg";
-import imgDandis from "./assets/speakers/dandis.png";
-import imgAlghwairi from "./assets/speakers/alghwairi.jpg";
-// Panelists
-import imgShannak from "./assets/panelists/shannak.jpg";
-import imgGhnimat from "./assets/panelists/ghnimat.jpg";
-import imgIsmail from "./assets/panelists/ismail.jpg";
-// About
+// ── Cybersecurity Webinar speakers ──────────────────────────────────────────
+import imgDandis from "./assets/speakers/cybersecurity/dandis.png";
+import imgRamyAlDamati from "./assets/speakers/cybersecurity/Ramy-AlDamati.jpg";
+import imgAliAlTamimi from "./assets/speakers/cybersecurity/Ali_Al-Tamimi.jpg";
+
+// ── AI Webinar speakers ──────────────────────────────────────────────────────
+import imgAlghwairi from "./assets/speakers/AI/alghwairi.jpg";
+import imgShannak from "./assets/speakers/AI/shannak.jpg";
+import imgGhaithHammouri from "./assets/speakers/AI/Ghaith-Hammouri.jpg";
+
+// ── Software Engineering Webinar speakers ────────────────────────────────────
+import imgAbuHadhoud from "./assets/speakers/software-engineer/abu-hadhoud.jpg";
+import imgIsmail from "./assets/speakers/software-engineer/ismail.jpg";
+import imgTariqElouzeh from "./assets/speakers/software-engineer/Tariq-Elouzeh.jpg";
+
+// ── About section ────────────────────────────────────────────────────────────
 import imgIEEE_CS from "./assets/about/IEEE-CS-UJ-Branch.png";
 import imgOutstanding from "./assets/about/Outstanding_Chapter.jpg";
 import imgRegion_8 from "./assets/about/Region_8_Award.jpg";
 
-// Group your imported images into a single array
-const FILM_STRIP_IMAGES = [
-  imgAbuHadhoud,
-  imgDandis,
-  imgAlghwairi,
-  imgShannak,
-  imgGhnimat,
-  imgIsmail,
-];
+import { WebinarSection } from "./components/WebinarSection";
 
+/* ══════════════════════════════════════════════════════════════════════════════
+   STYLES
+══════════════════════════════════════════════════════════════════════════════ */
 const STYLES = `
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
 
@@ -43,20 +45,16 @@ const STYLES = `
 
 html,body{height:100%;overflow:hidden;}
 
+/* ── Normal scroll (no snap) ── */
 .snap-wrap{
   height:100vh;
   overflow-y:scroll;
-  scroll-snap-type:y mandatory;
   scroll-behavior:smooth;
-  -webkit-overflow-scrolling:touch;
   background:var(--bg);
 }
 .snap-wrap::-webkit-scrollbar{display:none;}
 
-/* Slow the snap itself via scroll-snap-stop */
 .section{
-  scroll-snap-align:start;
-  scroll-snap-stop:always;
   min-height:100vh;
   position:relative;
   overflow:hidden;
@@ -64,29 +62,23 @@ html,body{height:100%;overflow:hidden;}
   align-items:center;
 }
 
-@supports (scroll-timeline: none) {
-  .snap-wrap {
-    scroll-timeline: --page-scroll block;
-  }
-}
-
+/* ── Flip cards ── */
 .flip-card{perspective:1200px;}
 .flip-inner{
-  position:relative; width:100%; height:100%;
+  position:relative;width:100%;height:100%;
   transform-style:preserve-3d;
   transition:transform 0.75s cubic-bezier(.22,1,.36,1);
 }
 .flip-card:hover .flip-inner{transform:rotateY(180deg) scale(1.06);}
 .flip-front,.flip-back{
-  position:absolute; inset:0;
+  position:absolute;inset:0;
   backface-visibility:hidden;
   -webkit-backface-visibility:hidden;
-  border-radius:18px;
-  overflow:hidden;
+  border-radius:18px;overflow:hidden;
 }
 .flip-back{transform:rotateY(180deg);}
 
-/* ── HERO ANIMATIONS ── */
+/* ── Hero animations ── */
 @keyframes letterDrop{
   0%{opacity:0;transform:translateY(80px) skewY(8deg);filter:blur(8px);}
   100%{opacity:1;transform:translateY(0) skewY(0);filter:blur(0);}
@@ -95,157 +87,61 @@ html,body{height:100%;overflow:hidden;}
   0%{opacity:0;transform:translateY(28px);}
   100%{opacity:1;transform:translateY(0);}
 }
-@keyframes scaleIn{
-  0%{opacity:0;transform:scale(0.85);}
-  100%{opacity:1;transform:scale(1);}
-}
 @keyframes goldPulse{
   0%,100%{text-shadow:0 0 30px rgba(245,166,35,0.25);}
   50%{text-shadow:0 0 80px rgba(245,166,35,0.6),0 0 140px rgba(232,137,26,0.3);}
 }
-@keyframes borderGrow{
-  0%{width:0;}100%{width:100%;}
-}
-@keyframes scrollLine{
-  0%{transform:scaleY(0);transform-origin:top;}
-  50%{transform:scaleY(1);transform-origin:top;}
-  51%{transform-origin:bottom;}
-  100%{transform:scaleY(0);transform-origin:bottom;}
-}
 
-/* ── FILM STRIP ANIMATIONS ── */
-@keyframes filmLeft{
-  0%{transform:translateX(0);}
-  100%{transform:translateX(-50%);}
-}
-@keyframes filmRight{
-  0%{transform:translateX(-50%);}
-  100%{transform:translateX(0);}
-}
-@keyframes txtLeft{
-  0%{transform:translateX(0);}
-  100%{transform:translateX(-50%);}
-}
-@keyframes txtRight{
-  0%{transform:translateX(-50%);}
-  100%{transform:translateX(0);}
-}
+/* ── Film strip ── */
+@keyframes filmLeft{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+@keyframes filmRight{0%{transform:translateX(-50%);}100%{transform:translateX(0);}}
+@keyframes txtLeft{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+@keyframes txtRight{0%{transform:translateX(-50%);}100%{transform:translateX(0);}}
 
 .strip-left{animation:filmLeft 35s linear infinite;display:flex;width:max-content;}
 .strip-right{animation:filmRight 35s linear infinite;display:flex;width:max-content;}
 .txt-left{animation:txtLeft 22s linear infinite;display:flex;width:max-content;white-space:nowrap;}
 .txt-right{animation:txtRight 22s linear infinite;display:flex;width:max-content;white-space:nowrap;}
 
-/* ── REVEAL ANIMATIONS ── */
-@keyframes revealUp{
-  0%{opacity:0;transform:translateY(40px);filter:blur(3px);}
-  100%{opacity:1;transform:translateY(0);filter:blur(0);}
-}
-@keyframes revealLeft{
-  0%{opacity:0;transform:translateX(30px);}
-  100%{opacity:1;transform:translateX(0);}
-}
-@keyframes expandCard{
-  0%{opacity:0;transform:scale(0.4) rotate(-3deg);border-radius:50%;}
-  70%{transform:scale(1.04) rotate(0.5deg);border-radius:20px;}
-  100%{opacity:1;transform:scale(1) rotate(0);border-radius:18px;}
-}
-@keyframes lineExpand{
-  0%{transform:scaleX(0);}
-  100%{transform:scaleX(1);}
-}
-
-/* ── SCROLL INDICATOR ── */
-@keyframes scrollBounce{
-  0%,100%{transform:translateY(0);opacity:0.8;}
-  50%{transform:translateY(10px);opacity:0.3;}
-}
-.scroll-dot{animation:scrollBounce 2.4s ease infinite;}
-
-@media (max-width:768px){
-
-  html,body{overflow:hidden;}
-
-  /* Looser snap so tall sections don't trap the user */
-  .snap-wrap{
-    scroll-snap-type:y proximity;
-    overflow-y:scroll;
-  }
-
-  /* Sections grow with content, no fixed viewport jail */
-  .section{
-    scroll-snap-align:start;
-    scroll-snap-stop:normal;
-    min-height:100vh;
-    height:auto !important;
-    overflow:visible;
-    padding:60px 0 40px;
-    align-items:flex-start;
-  }
-
-  /* All two-column grids collapse */
-  .two-col{
-    grid-template-columns:1fr !important;
-    gap:28px !important;
-  }
-
-  /* Three-col keynotes already uses auto-fit — keep it */
-
-  /* Hide the flip card cluster on mobile, show stacked list instead */
-  .flip-cluster{ display:none !important; }
-  .flip-mobile { display:flex !important; }
-
-  .yazan-img { object-position: 10% 45% !important; }
-}
-
-/* ── HOVER STATES ── */
-.cta-btn{
-  transition:transform 0.25s ease,box-shadow 0.25s ease,background 0.25s ease;
-  cursor:pointer;
-}
+/* ── Hover states ── */
+.cta-btn{transition:transform 0.25s ease,box-shadow 0.25s ease;cursor:pointer;}
 .cta-btn:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(245,166,35,0.35);}
-
-.ghost-btn{
-  transition:all 0.25s ease;
-  cursor:pointer;
-}
+.ghost-btn{transition:all 0.25s ease;cursor:pointer;}
 .ghost-btn:hover{background:rgba(245,166,35,0.08);border-color:rgba(245,166,35,0.5);}
-
 .card{transition:transform 0.3s ease,box-shadow 0.3s ease;}
 .card:hover{
   transform:translateY(-6px);
   box-shadow:0 0 0 1px rgba(245,166,35,0.3),0 32px 80px rgba(0,0,0,0.6),0 8px 24px rgba(245,166,35,0.1);
 }
-
 .nav-link{
-  transition:color 0.2s ease;
-  cursor:pointer;
-  font-family:'DM Sans',sans-serif;
-  font-size:13px;
-  letter-spacing:0.08em;
-  text-transform:uppercase;
-  color:var(--muted);
+  transition:color 0.2s ease;cursor:pointer;
+  font-family:'DM Sans',sans-serif;font-size:13px;
+  letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);
 }
 .nav-link:hover{color:var(--cream);}
-
-.footer-link{
-  transition:color 0.2s;
-  cursor:pointer;
-  color:var(--muted);
-}
+.footer-link{transition:color 0.2s;cursor:pointer;color:var(--muted);}
 .footer-link:hover{color:var(--cream);}
 
-.social-cell{
-  transition:background 0.2s;
-  cursor:pointer;
+/* ── Flip cluster / mobile ── */
+.flip-cluster{display:block;}
+.flip-mobile{display:none;}
+
+/* ── Mobile ── */
+@media(max-width:768px){
+  .section{min-height:100vh;height:auto!important;overflow:visible;padding:60px 0 40px;align-items:flex-start;}
+  .two-col{grid-template-columns:1fr!important;gap:28px!important;}
+  .flip-cluster{display:none!important;}
+  .flip-mobile{display:flex!important;}
+  .panel-tall{height:auto!important;min-height:260px!important;}
+  .panel-small{height:220px!important;}
+  .yazan-img{object-position:10% 30%!important;}
 }
-.social-cell:hover{background:rgba(245,166,35,0.04);}
 `;
 
-/* ─────────────────────────────────────── */
-/*  HELPERS                                */
-/* ─────────────────────────────────────── */
-const useInView = (threshold = 0.3) => {
+/* ══════════════════════════════════════════════════════════════════════════════
+   HELPERS
+══════════════════════════════════════════════════════════════════════════════ */
+const useInView = (threshold = 0.25) => {
   const ref = useRef(null);
   const [visible, setVisible] = useState(false);
   useEffect(() => {
@@ -268,9 +164,227 @@ const anim = (visible, delay = 0, extra = {}) => ({
   ...extra,
 });
 
-/* ─────────────────────────────────────── */
-/*  1. HERO                                */
-/* ─────────────────────────────────────── */
+const scrollTo = (id) =>
+  document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   SPEAKER CARD — shared between all three webinar sections
+══════════════════════════════════════════════════════════════════════════════ */
+function SpeakerCard({ speaker, index, visible, accent, hoverBg }) {
+  const [hov, setHov] = useState(false);
+  return (
+    <div
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        background: hov ? hoverBg : speaker.bg,
+        borderRadius: 20,
+        border: `1px solid ${hov ? accent + "55" : "rgba(245,166,35,0.12)"}`,
+        padding: "28px",
+        position: "relative",
+        overflow: "hidden",
+        cursor: "pointer",
+        transform: hov
+          ? "translateY(-8px) scale(1.015)"
+          : "translateY(0) scale(1)",
+        boxShadow: hov
+          ? `0 24px 60px rgba(0,0,0,0.5), 0 0 0 1px ${accent}33`
+          : "none",
+        transition: "all 0.55s cubic-bezier(.22,1,.36,1)",
+        opacity: visible ? 1 : 0,
+        transform: visible
+          ? hov
+            ? "translateY(-8px) scale(1.015)"
+            : "translateY(0)"
+          : "translateY(36px)",
+        transition: `opacity 0.9s ease ${0.15 + index * 0.15}s, transform 0.9s ease ${0.15 + index * 0.15}s, box-shadow 0.55s ease`,
+      }}
+    >
+      {/* Accent glow */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          pointerEvents: "none",
+          background: `radial-gradient(ellipse 80% 60% at 50% 0%, ${accent}18 0%, transparent 70%)`,
+          opacity: hov ? 1 : 0,
+          transition: "opacity 0.55s ease",
+        }}
+      />
+
+      {/* Keynote number watermark */}
+      <div
+        style={{
+          position: "absolute",
+          top: 14,
+          right: 18,
+          fontFamily: "'Bebas Neue'",
+          fontSize: 60,
+          lineHeight: 1,
+          color: hov ? accent + "22" : "rgba(245,166,35,0.06)",
+          pointerEvents: "none",
+          transition: "color 0.55s ease",
+        }}
+      >
+        {String(index + 1).padStart(2, "0")}
+      </div>
+
+      {/* Speaker image */}
+      <div
+        style={{
+          width: "100%",
+          height: 200,
+          borderRadius: 14,
+          overflow: "hidden",
+          marginBottom: 18,
+          position: "relative",
+        }}
+      >
+        {speaker.img ? (
+          <img
+            src={speaker.img}
+            alt={speaker.name}
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              objectPosition: speaker.imgPosition ?? "center top",
+              filter: hov
+                ? "grayscale(0%) brightness(1)"
+                : "grayscale(100%) brightness(0.55)",
+              transform: hov ? "scale(1.05)" : "scale(1)",
+              transition: "filter 0.65s ease, transform 0.65s ease",
+            }}
+          />
+        ) : (
+          <div
+            style={{
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background: "rgba(245,166,35,0.08)",
+              fontFamily: "'Bebas Neue'",
+              fontSize: 48,
+              color: hov ? accent : "var(--gold)",
+              transition: "color 0.45s ease",
+            }}
+          >
+            {speaker.initials}
+          </div>
+        )}
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: hov ? "transparent" : "rgba(8,3,0,0.35)",
+            transition: "background 0.65s ease",
+            pointerEvents: "none",
+          }}
+        />
+      </div>
+
+      {/* Keynote label */}
+      <span
+        style={{
+          fontFamily: "'DM Sans'",
+          fontSize: 10,
+          color: hov ? accent : "var(--gold)",
+          letterSpacing: "0.16em",
+          textTransform: "uppercase",
+          transition: "color 0.45s ease",
+        }}
+      >
+        {speaker.keynoteLabel}
+      </span>
+
+      <h3
+        style={{
+          fontFamily: "'Syne'",
+          fontWeight: 800,
+          fontSize: 17,
+          color: "var(--cream)",
+          margin: "7px 0 5px",
+          lineHeight: 1.25,
+        }}
+      >
+        {speaker.title}
+      </h3>
+      <p
+        style={{
+          fontFamily: "'DM Sans'",
+          fontSize: 12,
+          color: hov ? accent + "CC" : "rgba(245,166,35,0.75)",
+          marginBottom: 14,
+          lineHeight: 1.5,
+          transition: "color 0.45s ease",
+        }}
+      >
+        {speaker.sub}
+      </p>
+
+      <div
+        style={{
+          height: 1,
+          background: hov ? accent + "44" : "rgba(245,166,35,0.08)",
+          marginBottom: 14,
+          transition: "background 0.45s ease",
+        }}
+      />
+
+      <p
+        style={{
+          fontFamily: "'Syne'",
+          fontWeight: 700,
+          color: "var(--cream)",
+          fontSize: 14,
+        }}
+      >
+        {speaker.name}
+      </p>
+      <p
+        style={{
+          fontFamily: "'DM Sans'",
+          fontSize: 12,
+          color: "var(--muted)",
+          marginTop: 8,
+          lineHeight: 1.75,
+        }}
+      >
+        {speaker.bio}
+      </p>
+
+      {/* Hover hint */}
+      <div
+        style={{
+          marginTop: 14,
+          display: "flex",
+          alignItems: "center",
+          gap: 6,
+          opacity: hov ? 0 : 0.35,
+          transition: "opacity 0.3s ease",
+        }}
+      >
+        <div style={{ width: 14, height: 1, background: "var(--gold)" }} />
+        <span
+          style={{
+            fontFamily: "'DM Sans'",
+            fontSize: 10,
+            color: "var(--gold)",
+            letterSpacing: "0.12em",
+          }}
+        >
+          HOVER FOR MORE
+        </span>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   1. HERO
+══════════════════════════════════════════════════════════════════════════════ */
 function Hero() {
   const [step, setStep] = useState(0);
   const canvasRef = useRef(null);
@@ -315,7 +429,7 @@ function Hero() {
     <section
       ref={heroRef}
       className="section"
-      id="about"
+      id="home"
       style={{
         justifyContent: "center",
         flexDirection: "column",
@@ -338,16 +452,16 @@ function Hero() {
       {/* NAV */}
       <nav
         style={{
-          flexWrap: "wrap",
-          gap: 12,
-          padding: "16px 20px",
           position: "absolute",
           top: 0,
           left: 0,
           right: 0,
+          padding: "20px clamp(20px,5vw,48px)",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
+          flexWrap: "wrap",
+          gap: 12,
           opacity: step >= 1 ? 1 : 0,
           transition: "opacity 1s ease 0.5s",
           zIndex: 10,
@@ -367,26 +481,20 @@ function Hero() {
         <div
           style={{
             display: "flex",
-            gap: 36,
+            gap: 28,
             marginLeft: "auto",
-            marginRight: 64,
+            marginRight: 48,
+            flexWrap: "wrap",
           }}
         >
           {[
             { label: "About", id: "about" },
-            { label: "Keynotes", id: "keynotes" },
-            { label: "Panel", id: "panel" },
-            { label: "Agenda", id: "agenda" },
+            { label: "Event", id: "event" },
+            { label: "Cyber", id: "webinar-cyber" },
+            { label: "AI", id: "webinar-ai" },
+            { label: "Software", id: "webinar-software" },
           ].map(({ label, id }) => (
-            <span
-              key={label}
-              className="nav-link"
-              onClick={() => {
-                document
-                  .getElementById(id)
-                  ?.scrollIntoView({ behavior: "smooth" });
-              }}
-            >
+            <span key={label} className="nav-link" onClick={() => scrollTo(id)}>
               {label}
             </span>
           ))}
@@ -423,7 +531,7 @@ function Hero() {
         </div>
       </nav>
 
-      {/* MAIN TITLE */}
+      {/* TITLE */}
       <div style={{ textAlign: "center", position: "relative", zIndex: 2 }}>
         <div style={{ display: "flex", justifyContent: "center" }}>
           {T.map((c, i) => letter(c, i, 0, i >= 2))}
@@ -439,15 +547,15 @@ function Hero() {
               display: "flex",
               gap: 20,
               justifyContent: "center",
-              animation: "fadeSlideUp 0.8s cubic-bezier(.22,1,.36,1) forwards",
+              animation: "fadeSlideUp 0.8s ease forwards",
+              flexWrap: "wrap",
             }}
           >
             <div
               style={{
                 height: 1,
                 width: 60,
-                background:
-                  "linear-gradient(to right, transparent, var(--gold))",
+                background: "linear-gradient(to right,transparent,var(--gold))",
                 alignSelf: "center",
               }}
             />
@@ -460,14 +568,13 @@ function Hero() {
                 textTransform: "uppercase",
               }}
             >
-              27 – 29 April 2026 · Online Webinar · 3 Days
+              27 – 29 April 2026 · Online Webinar Series
             </p>
             <div
               style={{
                 height: 1,
                 width: 60,
-                background:
-                  "linear-gradient(to left, transparent, var(--gold))",
+                background: "linear-gradient(to left,transparent,var(--gold))",
                 alignSelf: "center",
               }}
             />
@@ -481,7 +588,7 @@ function Hero() {
               display: "flex",
               gap: 14,
               justifyContent: "center",
-              animation: "fadeSlideUp 0.9s cubic-bezier(.22,1,.36,1) forwards",
+              animation: "fadeSlideUp 0.9s ease forwards",
             }}
           >
             <button
@@ -499,25 +606,8 @@ function Hero() {
                 textTransform: "uppercase",
               }}
             >
-              Save My Spot
+              Register Now
             </button>
-            {/* <button
-              className="ghost-btn"
-              style={{
-                background: "transparent",
-                color: "var(--cream)",
-                fontFamily: "'Syne'",
-                fontWeight: 600,
-                fontSize: 13,
-                letterSpacing: "0.1em",
-                padding: "14px 36px",
-                borderRadius: 100,
-                border: "1px solid rgba(245,166,35,0.25)",
-                textTransform: "uppercase",
-              }}
-            >
-              Learn More
-            </button> */}
           </div>
         )}
       </div>
@@ -525,18 +615,11 @@ function Hero() {
   );
 }
 
-/* ─────────────────────────────────────── */
-/*  2. FILM STRIP                          */
-/* ─────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════════════════════════
+   2. FILM STRIP
+══════════════════════════════════════════════════════════════════════════════ */
 function FilmStrip() {
   const speakers = [
-    {
-      initials: "MA",
-      name: "Mohammed Abu-Hadhoud",
-      role: "Software Engineering",
-      bg: "#1E0A00",
-      img: imgAbuHadhoud,
-    },
     {
       initials: "AD",
       name: "Aladdin Dandis",
@@ -545,11 +628,32 @@ function FilmStrip() {
       img: imgDandis,
     },
     {
+      initials: "RT",
+      name: "Rami Al-Tamimi",
+      role: "AI & Cybersecurity",
+      bg: "#001800",
+      img: imgRamyAlDamati,
+    },
+    {
+      initials: "AT",
+      name: "Ali Tamimi",
+      role: "Cybersecurity",
+      bg: "#001800",
+      img: imgAliAlTamimi,
+    },
+    {
       initials: "AA",
       name: "Abdullah Alghwairi",
-      role: "AI & Product",
+      role: "AI & Product Lead",
       bg: "#0A0018",
       img: imgAlghwairi,
+    },
+    {
+      initials: "GH",
+      name: "Ghaith Hammouri",
+      role: "AI & Cybersecurity",
+      bg: "#001800",
+      img: imgGhaithHammouri,
     },
     {
       initials: "YS",
@@ -557,13 +661,21 @@ function FilmStrip() {
       role: "AI Manager",
       bg: "#001820",
       img: imgShannak,
+      objectPosition: "10% 50%",
     },
     {
-      initials: "AG",
-      name: "Ahmed Ghnimat",
-      role: "Cybersecurity Ops",
-      bg: "#180010",
-      img: imgGhnimat,
+      initials: "MA",
+      name: "Mohammed Abu-Hadhoud",
+      role: "Software Engineering",
+      bg: "#1E0A00",
+      img: imgAbuHadhoud,
+    },
+    {
+      initials: "TE",
+      name: "Tariq Elouzeh",
+      role: "Senior Software Automation Engineer",
+      bg: "#001800",
+      img: imgTariqElouzeh,
     },
     {
       initials: "OI",
@@ -603,7 +715,7 @@ function FilmStrip() {
   const Card = ({ s }) => (
     <div
       style={{
-        width: "clamp(130px, 22vw, 170px)",
+        width: "clamp(130px,22vw,170px)",
         flexShrink: 0,
         marginRight: 10,
         border: "1px solid rgba(245,166,35,0.12)",
@@ -618,7 +730,7 @@ function FilmStrip() {
           height: 190,
           overflow: "hidden",
           position: "relative",
-          background: `linear-gradient(160deg, ${s.bg}, #100400)`,
+          background: `linear-gradient(160deg,${s.bg},#100400)`,
         }}
       >
         {s.img ? (
@@ -629,7 +741,7 @@ function FilmStrip() {
               width: "100%",
               height: "100%",
               objectFit: "cover",
-              objectPosition: "10% 50%",
+              objectPosition: s.objectPosition || "center top",
               display: "block",
             }}
           />
@@ -649,7 +761,6 @@ function FilmStrip() {
             {s.initials}
           </div>
         )}
-        {/* subtle bottom fade so name reads cleanly */}
         <div
           style={{
             position: "absolute",
@@ -657,8 +768,7 @@ function FilmStrip() {
             left: 0,
             right: 0,
             height: 60,
-            background:
-              "linear-gradient(to top, rgba(0,0,0,0.75), transparent)",
+            background: "linear-gradient(to top,rgba(0,0,0,0.75),transparent)",
             pointerEvents: "none",
           }}
         />
@@ -689,7 +799,11 @@ function FilmStrip() {
     </div>
   );
 
-  const words = ["LECTURES", "WORKSHOPS", "KEYNOTES", "PANELS"];
+  const words = [
+    "CYBERSECURITY",
+    "ARTIFICIAL INTELLIGENCE",
+    "SOFTWARE ENGINEERING",
+  ];
   const wordsD = [...words, ...words, ...words, ...words];
 
   return (
@@ -709,7 +823,6 @@ function FilmStrip() {
           ))}
         </div>
       </div>
-
       <div
         style={{
           overflow: "hidden",
@@ -725,7 +838,7 @@ function FilmStrip() {
               key={i}
               style={{
                 fontFamily: "'Bebas Neue'",
-                fontSize: "clamp(30px, 4vw, 52px)",
+                fontSize: "clamp(28px,4vw,50px)",
                 color: i % 2 === 0 ? "var(--cream)" : "var(--gold)",
                 marginRight: 36,
                 display: "inline-block",
@@ -738,7 +851,6 @@ function FilmStrip() {
           ))}
         </div>
       </div>
-
       <div style={{ overflow: "hidden" }}>
         <div className="strip-right">
           {[...doubled].reverse().map((s, i) => (
@@ -750,9 +862,9 @@ function FilmStrip() {
   );
 }
 
-/* ─────────────────────────────────────── */
-/*  3. ABOUT IEEE                          */
-/* ─────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════════════════════════
+   3. ABOUT IEEE
+══════════════════════════════════════════════════════════════════════════════ */
 function AboutIEEE() {
   const [ref, v] = useInView(0.25);
   const stats = [
@@ -772,7 +884,7 @@ function AboutIEEE() {
         style={{
           maxWidth: 1200,
           margin: "0 auto",
-          padding: "0 clamp(20px, 5vw, 56px)",
+          padding: "0 clamp(20px,5vw,56px)",
           display: "grid",
           gridTemplateColumns: "1fr 1fr",
           gap: 80,
@@ -780,7 +892,6 @@ function AboutIEEE() {
           width: "100%",
         }}
       >
-        {/* Left text */}
         <div>
           <span
             style={{
@@ -799,7 +910,7 @@ function AboutIEEE() {
             style={{
               ...anim(v, 0.12),
               fontFamily: "'Bebas Neue'",
-              fontSize: "clamp(60px, 8vw, 100px)",
+              fontSize: "clamp(60px,8vw,100px)",
               color: "var(--cream)",
               lineHeight: 0.88,
               marginTop: 8,
@@ -1029,7 +1140,7 @@ function AboutIEEE() {
           ))}
         </div>
 
-        {/* Mobile stacked cards — hidden on desktop */}
+        {/* Mobile stacked */}
         <div
           className="flip-mobile"
           style={{
@@ -1126,9 +1237,9 @@ function AboutIEEE() {
   );
 }
 
-/* ─────────────────────────────────────── */
-/*  4. IEEE CS UJ BRANCH  (balanced-sound reveal) */
-/* ─────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════════════════════════
+   4. IEEE CS UJ BRANCH
+══════════════════════════════════════════════════════════════════════════════ */
 function IEEEBranch() {
   const [ref, v] = useInView(0.25);
   const goals = [
@@ -1159,7 +1270,7 @@ function IEEEBranch() {
         style={{
           maxWidth: 1200,
           margin: "0 auto",
-          padding: "0 clamp(20px, 5vw, 56px)",
+          padding: "0 clamp(20px,5vw,56px)",
           width: "100%",
         }}
       >
@@ -1186,13 +1297,12 @@ function IEEEBranch() {
             alignItems: "start",
           }}
         >
-          {/* Left */}
           <div>
             <h2
               style={{
                 ...anim(v, 0.1),
                 fontFamily: "'Bebas Neue'",
-                fontSize: "clamp(48px, 6vw, 80px)",
+                fontSize: "clamp(48px,6vw,80px)",
                 color: "var(--cream)",
                 lineHeight: 0.88,
               }}
@@ -1242,8 +1352,6 @@ function IEEEBranch() {
               </p>
             </div>
           </div>
-
-          {/* Right: balanced-sound style list */}
           <div>
             {goals.map((g, i) => (
               <div
@@ -1308,33 +1416,46 @@ function IEEEBranch() {
   );
 }
 
-/* ─────────────────────────────────────── */
-/*  5. ABOUT THE EVENT                     */
-/* ─────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════════════════════════
+   5. ABOUT THE EVENT  (updated content from new PDF)
+══════════════════════════════════════════════════════════════════════════════ */
 function AboutEvent() {
   const [ref, v] = useInView(0.25);
   const details = [
-    { icon: "◈", label: "Format", value: "Online Webinar" },
-    { icon: "◷", label: "Duration", value: "3 Hours / Session" },
+    { icon: "◈", label: "Format", value: "Online Webinar Series" },
+    { icon: "◷", label: "Duration", value: "3 Hours Per Session" },
     { icon: "◉", label: "Days", value: "27 – 29 April 2026" },
-    { icon: "◈", label: "Access", value: "Free · Open To All" },
+    { icon: "◈", label: "Sessions", value: "9 Keynote Speeches" },
+  ];
+  const perspectives = [
+    "Understanding the field and how to start learning it",
+    "Exploring the field in the age of AI",
+    "Highlighting its domains and job market in 2026",
   ];
   return (
-    <section className="section" style={{ background: "var(--bg)" }} ref={ref}>
+    <section
+      className="section"
+      id="event"
+      ref={ref}
+      style={{ background: "var(--bg)" }}
+    >
       <div
         style={{
           maxWidth: 1200,
           margin: "0 auto",
-          padding: "0 clamp(20px, 5vw, 56px)",
+          padding: "0 clamp(20px,5vw,56px)",
           width: "100%",
         }}
       >
+        {/* Tags */}
         <div
           style={{
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
             marginBottom: 40,
+            flexWrap: "wrap",
+            gap: 12,
           }}
         >
           <span
@@ -1358,7 +1479,7 @@ function AboutEvent() {
               <span
                 key={i}
                 style={{
-                  ...anim(v, 0.1 + i * 0.08),
+                  ...anim(v, 0.08 + i * 0.06),
                   fontFamily: "'DM Sans'",
                   fontSize: 11,
                   color: "var(--gold)",
@@ -1386,9 +1507,9 @@ function AboutEvent() {
           <div>
             <h2
               style={{
-                ...anim(v, 0.15),
+                ...anim(v, 0.12),
                 fontFamily: "'Bebas Neue'",
-                fontSize: "clamp(52px, 7vw, 88px)",
+                fontSize: "clamp(52px,7vw,88px)",
                 color: "var(--cream)",
                 lineHeight: 0.88,
               }}
@@ -1399,21 +1520,22 @@ function AboutEvent() {
             </h2>
             <p
               style={{
-                ...anim(v, 0.26),
+                ...anim(v, 0.22),
                 fontFamily: "'DM Sans'",
                 color: "var(--muted)",
                 fontSize: 15,
                 lineHeight: 1.85,
-                marginTop: 26,
+                marginTop: 24,
               }}
             >
-              A 3-day online webinar series designed to introduce participants
-              to three major IT fields in a clear and practical way. Each day
-              features a dedicated 3-hour session led by an industry expert.
+              A learning-focused online webinar series designed to introduce
+              participants to three major IT fields — Software Engineering,
+              Cybersecurity, and Artificial Intelligence — in a clear and
+              practical way.
             </p>
             <p
               style={{
-                ...anim(v, 0.34),
+                ...anim(v, 0.3),
                 fontFamily: "'DM Sans'",
                 color: "var(--muted)",
                 fontSize: 15,
@@ -1421,10 +1543,45 @@ function AboutEvent() {
                 marginTop: 14,
               }}
             >
-              The series concludes with a panel discussion on the IT job market,
-              offering real insights into career opportunities, required skills,
-              and what employers actually look for in 2026.
+              The series is delivered over three days, with each day dedicated
+              to one field. Each day features three keynote speeches by three
+              industry experts, each covering a key perspective:
             </p>
+            <div style={{ marginTop: 20 }}>
+              {perspectives.map((p, i) => (
+                <div
+                  key={i}
+                  style={{
+                    ...anim(v, 0.36 + i * 0.1),
+                    display: "flex",
+                    alignItems: "flex-start",
+                    gap: 12,
+                    marginBottom: 12,
+                  }}
+                >
+                  <div
+                    style={{
+                      width: 6,
+                      height: 6,
+                      borderRadius: "50%",
+                      background: "var(--gold)",
+                      flexShrink: 0,
+                      marginTop: 7,
+                    }}
+                  />
+                  <p
+                    style={{
+                      fontFamily: "'DM Sans'",
+                      color: "rgba(245,220,180,0.8)",
+                      fontSize: 14,
+                      lineHeight: 1.7,
+                    }}
+                  >
+                    {p}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
 
           <div
@@ -1486,950 +1643,170 @@ function AboutEvent() {
   );
 }
 
-/* ─────────────────────────────────────── */
-/*  6. KEYNOTES                            */
-/* ─────────────────────────────────────── */
-function Keynotes() {
-  const [ref, v] = useInView(0.2);
-  const [hovered, setHovered] = useState(null);
-
-  const kn = [
+/* ══════════════════════════════════════════════════════════════════════════════
+   6. CYBERSECURITY WEBINAR — Day 1 · 27 April
+══════════════════════════════════════════════════════════════════════════════ */
+export function WebinarCyber() {
+  const speakers = [
     {
-      n: "01",
-      field: "Software Engineering",
-      title: "From Idea to System",
-      sub: "Understanding Software Engineering and How to Learn It.",
-      speaker: "Mohammed Abu-Hadhoud",
-      initials: "MA",
-      img: imgAbuHadhoud,
-      imgPosition: "center top",
-      bio: "Jordanian software engineer, entrepreneur & educator with 25+ years in software development, project management, and IT solutions. Founder & CEO of Programming Advices and Epya Solutions.",
-      bg: "linear-gradient(145deg,#2A1200,#0D0500)",
-      hoverBg: "linear-gradient(145deg,#4A2800,#2A1000)",
-      accent: "#E8891A",
-      extra:
-        "Specializes in teaching students how to build real-world systems from scratch — from requirements analysis to deployment. His YouTube channel has helped hundreds of thousands across the Arab world.",
-    },
-    {
-      n: "02",
-      field: "Cybersecurity",
-      title: "Inside Cybersecurity",
-      sub: "Understanding Attacks, Defense, and How to Learn It.",
-      speaker: "Aladdin Dandis",
       initials: "AD",
       img: imgDandis,
-      imgPosition: "10% 40%",
-      bio: "Jordan-based cybersecurity consultant, educator & technology leader with 25+ years in information security across government and private sectors.",
-      bg: "linear-gradient(145deg,#00180A,#050300)",
-      hoverBg: "linear-gradient(145deg,#003A18,#001A08)",
-      accent: "#2ECC71",
-      extra:
-        "Worked extensively with CIRT teams and national cybersecurity frameworks. Trains professionals in ethical hacking, risk management, and ISO 27001 compliance.",
+      imgPosition: "10% 20%",
+      keynoteLabel: "First Keynote",
+      title:
+        "Inside Cybersecurity: Understanding Attacks, Defense, and How to Learn It",
+      sub: "Understanding the field and how to start learning it.",
+      name: "Aladdin Dandis",
+      bio: "A Jordan-based cybersecurity consultant, educator, and technology leader with over 25 years of experience in information security across both government and private sectors, specializing in cybersecurity management, training, and compliance.",
+      bg: "linear-gradient(145deg,#001A0A,#050300)",
     },
     {
-      n: "03",
-      field: "Artificial Intelligence",
-      title: "From Data to Decisions",
-      sub: "Understanding AI and How to Learn It.",
-      speaker: "Abdullah Alghwairi",
-      initials: "AA",
-      img: imgAlghwairi,
-      imgPosition: "10% 40%",
-      bio: "AI professional & product leader with 10+ years at the intersection of AI, business, and product management. Currently leads initiatives at Kernel for AI.",
-      bg: "linear-gradient(145deg,#0D0022,#060200)",
-      hoverBg: "linear-gradient(145deg,#220044,#100018)",
-      accent: "#9B59B6",
-      extra:
-        "Bridges the gap between technical AI research and real product outcomes. Advises startups on AI adoption strategies and has launched multiple AI-powered SaaS products in the MENA region.",
+      initials: "RA",
+      img: imgRamyAlDamati,
+      imgPosition: "center top",
+      keynoteLabel: "Second Keynote",
+      title: "Cybersecurity in the Age of AI",
+      sub: "Exploring the field through the lens of artificial intelligence.",
+      name: "Ramy AlDamati",
+      bio: "A Jordan-based technology leader and consultant specializing in cybersecurity, AI, blockchain, and emerging technologies. Known for his work in AI governance, risk management, and digital transformation, and has contributed to national-level AI standards in Jordan.",
+      bg: "linear-gradient(145deg,#001209,#060200)",
+    },
+    {
+      initials: "AT",
+      img: imgAliAlTamimi,
+      imgPosition: "center",
+      keynoteLabel: "Third Keynote",
+      title: "Cybersecurity Fields & Job Market in 2026",
+      sub: "Domains, career paths, and what employers demand.",
+      name: "Ali Al-Tamimi",
+      bio: "Founder & CEO of Hayyan Horizons, an IT security and systems integration company. With over 30 years of experience across the Middle East, Europe, and Africa, he held senior leadership roles at global organizations including Hewlett-Packard (HP).",
+      bg: "linear-gradient(145deg,#001510,#050200)",
     },
   ];
 
   return (
-    <section
-      className="section"
-      id="keynotes"
-      style={{ background: "var(--bg3)" }}
-      ref={ref}
-    >
-      <div
-        style={{
-          maxWidth: 1200,
-          margin: "0 auto",
-          padding: "0 clamp(20px, 5vw, 56px)",
-          width: "100%",
-        }}
-      >
-        <div style={{ ...anim(v, 0), marginBottom: 40 }}>
-          <span
-            style={{
-              fontFamily: "'DM Sans'",
-              fontSize: 11,
-              color: "var(--gold)",
-              letterSpacing: "0.22em",
-              textTransform: "uppercase",
-            }}
-          >
-            Event Program
-          </span>
-          <h2
-            style={{
-              fontFamily: "'Bebas Neue'",
-              fontSize: "clamp(48px, 6vw, 72px)",
-              color: "var(--cream)",
-              lineHeight: 0.88,
-              marginTop: 6,
-            }}
-          >
-            KEYNOTE <span style={{ color: "var(--gold)" }}>SESSIONS</span>
-          </h2>
-        </div>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-            gap: 18,
-          }}
-        >
-          {kn.map((k, i) => {
-            const isHov = hovered === i;
-            return (
-              <div
-                key={i}
-                onMouseEnter={() => setHovered(i)}
-                onMouseLeave={() => setHovered(null)}
-                style={{
-                  background: isHov ? k.hoverBg : k.bg,
-                  borderRadius: 20,
-                  border: `1px solid ${isHov ? k.accent + "55" : "rgba(245,166,35,0.12)"}`,
-                  padding: "28px",
-                  position: "relative",
-                  overflow: "hidden",
-                  cursor: "pointer",
-                  transform: isHov
-                    ? "translateY(-8px) scale(1.015)"
-                    : "translateY(0) scale(1)",
-                  boxShadow: isHov
-                    ? `0 24px 60px rgba(0,0,0,0.5), 0 0 0 1px ${k.accent}33, 0 8px 30px ${k.accent}22`
-                    : "none",
-                  transition: "all 0.55s cubic-bezier(.22,1,.36,1)",
-                  ...anim(v, 0.18 + i * 0.14),
-                }}
-              >
-                {/* Accent glow on hover */}
-                <div
-                  style={{
-                    position: "absolute",
-                    inset: 0,
-                    pointerEvents: "none",
-                    background: `radial-gradient(ellipse 80% 60% at 50% 0%, ${k.accent}18 0%, transparent 70%)`,
-                    opacity: isHov ? 1 : 0,
-                    transition: "opacity 0.55s ease",
-                  }}
-                />
-
-                {/* Big number watermark */}
-                <div
-                  style={{
-                    position: "absolute",
-                    top: 14,
-                    right: 18,
-                    fontFamily: "'Bebas Neue'",
-                    fontSize: 60,
-                    lineHeight: 1,
-                    color: isHov ? k.accent + "22" : "rgba(245,166,35,0.06)",
-                    pointerEvents: "none",
-                    transition: "color 0.55s ease",
-                  }}
-                >
-                  {k.n}
-                </div>
-
-                {/* Speaker image — large, grayscale → color on hover */}
-                <div
-                  style={{
-                    width: "100%",
-                    height: 200,
-                    borderRadius: 14,
-                    overflow: "hidden",
-                    marginBottom: 18,
-                    flexShrink: 0,
-                    position: "relative",
-                  }}
-                >
-                  {k.img ? (
-                    <img
-                      src={k.img}
-                      alt={k.speaker}
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                        objectPosition: k.imgPosition ?? "center top",
-                        filter: isHov
-                          ? "grayscale(0%) brightness(1)"
-                          : "grayscale(100%) brightness(0.55)",
-                        transform: isHov ? "scale(1.05)" : "scale(1)",
-                        transition: "filter 0.65s ease, transform 0.65s ease",
-                      }}
-                    />
-                  ) : (
-                    <div
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        background: "rgba(245,166,35,0.08)",
-                        fontFamily: "'Bebas Neue'",
-                        fontSize: 42,
-                        color: isHov ? k.accent : "var(--gold)",
-                        transition: "color 0.45s ease",
-                      }}
-                    >
-                      {k.initials}
-                    </div>
-                  )}
-                  <div
-                    style={{
-                      position: "absolute",
-                      inset: 0,
-                      background: isHov ? "transparent" : "rgba(8,3,0,0.35)",
-                      transition: "background 0.65s ease",
-                      pointerEvents: "none",
-                    }}
-                  />
-                </div>
-
-                <span
-                  style={{
-                    fontFamily: "'DM Sans'",
-                    fontSize: 10,
-                    color: isHov ? k.accent : "var(--gold)",
-                    letterSpacing: "0.16em",
-                    textTransform: "uppercase",
-                    transition: "color 0.45s ease",
-                  }}
-                >
-                  {k.field}
-                </span>
-
-                <h3
-                  style={{
-                    fontFamily: "'Syne'",
-                    fontWeight: 800,
-                    fontSize: 18,
-                    color: "var(--cream)",
-                    margin: "8px 0 5px",
-                  }}
-                >
-                  {k.title}
-                </h3>
-                <p
-                  style={{
-                    fontFamily: "'DM Sans'",
-                    fontSize: 12,
-                    color: isHov ? k.accent + "CC" : "rgba(245,166,35,0.75)",
-                    marginBottom: 16,
-                    lineHeight: 1.5,
-                    transition: "color 0.45s ease",
-                  }}
-                >
-                  {k.sub}
-                </p>
-
-                <div
-                  style={{
-                    height: 1,
-                    background: isHov
-                      ? k.accent + "44"
-                      : "rgba(245,166,35,0.08)",
-                    marginBottom: 16,
-                    transition: "background 0.45s ease",
-                  }}
-                />
-
-                <p
-                  style={{
-                    fontFamily: "'Syne'",
-                    fontWeight: 700,
-                    color: "var(--cream)",
-                    fontSize: 14,
-                  }}
-                >
-                  {k.speaker}
-                </p>
-                <p
-                  style={{
-                    fontFamily: "'DM Sans'",
-                    fontSize: 12,
-                    color: "var(--muted)",
-                    marginTop: 8,
-                    lineHeight: 1.75,
-                  }}
-                >
-                  {k.bio}
-                </p>
-
-                {/* Expanded content on hover */}
-                <div
-                  style={{
-                    maxHeight: isHov ? "120px" : "0px",
-                    overflow: "hidden",
-                    opacity: isHov ? 1 : 0,
-                    transition:
-                      "max-height 0.55s cubic-bezier(.22,1,.36,1), opacity 0.4s ease 0.1s",
-                    marginTop: isHov ? 16 : 0,
-                  }}
-                >
-                  <div
-                    style={{
-                      height: 1,
-                      background: k.accent + "33",
-                      marginBottom: 14,
-                    }}
-                  />
-                  <p
-                    style={{
-                      fontFamily: "'DM Sans'",
-                      fontSize: 12,
-                      color: "rgba(245,235,220,0.65)",
-                      lineHeight: 1.8,
-                    }}
-                  >
-                    {k.extra}
-                  </p>
-                </div>
-
-                {/* Hover hint */}
-                <div
-                  style={{
-                    marginTop: 16,
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 6,
-                    opacity: isHov ? 0 : 0.4,
-                    transition: "opacity 0.3s ease",
-                  }}
-                >
-                  <div
-                    style={{ width: 14, height: 1, background: "var(--gold)" }}
-                  />
-                  <span
-                    style={{
-                      fontFamily: "'DM Sans'",
-                      fontSize: 10,
-                      color: "var(--gold)",
-                      letterSpacing: "0.12em",
-                    }}
-                  >
-                    HOVER FOR MORE
-                  </span>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </section>
+    <WebinarSection
+      id="webinar-cyber"
+      day="Day 1"
+      date="27 April 2026"
+      field="Cybersecurity"
+      description="A 3-hour deep-dive into the world of cybersecurity — from understanding attacks and defense fundamentals, to how AI is reshaping the threat landscape, to the real job market opportunities waiting in 2026."
+      accent="#2ECC71"
+      hoverBg="linear-gradient(145deg,#003A18,#001A08)"
+      bg="var(--bg3)"
+      speakers={speakers}
+    />
   );
 }
 
-/* ─────────────────────────────────────── */
-/*  7. PANEL  (expanding box / bento)      */
-/* ─────────────────────────────────────── */
-function Panel() {
-  const [ref, v] = useInView(0.22);
-
-  const panelists = [
+/* ══════════════════════════════════════════════════════════════════════════════
+   7. AI WEBINAR — Day 2 · 28 April
+══════════════════════════════════════════════════════════════════════════════ */
+export function WebinarAI() {
+  const speakers = [
+    {
+      initials: "AA",
+      img: imgAlghwairi,
+      imgPosition: "10% 40%",
+      keynoteLabel: "First Keynote",
+      title: "From Data to Decisions: Understanding AI and How to Learn It",
+      sub: "Understanding the field and how to start learning it.",
+      name: "Abdullah Alghwairi",
+      bio: "An AI professional and product leader with over 10 years of experience working at the intersection of artificial intelligence, business, and product management. Currently leads initiatives at Kernel for AI, focusing on turning AI technologies into real-world solutions.",
+      bg: "linear-gradient(145deg,#0D0022,#060200)",
+    },
+    {
+      initials: "GH",
+      img: imgGhaithHammouri,
+      imgPosition: "10% 40%",
+      keynoteLabel: "Second Keynote",
+      title: "Turning AI Knowledge into Real Impact",
+      sub: "Exploring AI in practice — from research to production.",
+      name: "Ghaith Hammouri",
+      bio: "A founder, researcher, and AI systems architect with over 15 years of experience at the intersection of generative AI, cybersecurity, and applied cryptography. Focuses on building secure and scalable intelligent technologies and bridging cutting-edge research with practical industry applications.",
+      bg: "linear-gradient(145deg,#100022,#060200)",
+    },
     {
       initials: "YS",
       img: imgShannak,
-      imgPosition: "center top",
+      imgPosition: "10% 40%",
+      keynoteLabel: "Third Keynote",
+      title: "AI Fields & Job Market in 2026",
+      sub: "Domains, career paths, and what employers demand.",
       name: "Yazan Shannak",
-      role: "AI Manager · Revest",
-      desc: "Specializes in AI-powered solutions and real-world applications. Master's in Data Science from UJ.",
-      bg: "linear-gradient(160deg,#1A1000,#0D0500)",
+      bio: "An AI Manager at Revest, specializing in building AI-powered solutions and real-world applications. Previously worked at ArabiaWeather and holds a Master's degree in Data Science from the University of Jordan.",
+      bg: "linear-gradient(145deg,#0A001A,#060200)",
+    },
+  ];
+
+  return (
+    <WebinarSection
+      id="webinar-ai"
+      day="Day 2"
+      date="28 April 2026"
+      field="Artificial Intelligence"
+      description="A 3-hour exploration of AI — from understanding the fundamentals and how to enter the field, to turning AI knowledge into real-world impact, to mapping the AI job market landscape in 2026."
+      accent="#9B59B6"
+      hoverBg="linear-gradient(145deg,#220044,#100018)"
+      bg="var(--bg2)"
+      speakers={speakers}
+    />
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   8. SOFTWARE ENGINEERING WEBINAR — Day 3 · 29 April
+══════════════════════════════════════════════════════════════════════════════ */
+export function WebinarSoftware() {
+  const speakers = [
+    {
+      initials: "MA",
+      img: imgAbuHadhoud,
+      imgPosition: "center top",
+      keynoteLabel: "First Keynote",
+      title:
+        "From Idea to System: Understanding Software Engineering and How to Learn It",
+      sub: "Understanding the field and how to start learning it.",
+      name: "Mohammed Abu-Hadhoud",
+      bio: "A Jordanian software engineer, entrepreneur, and educator with over 25 years of experience in software development, project management, and IT solutions. Founder & CEO of Programming Advices and Epya Solutions.",
+      bg: "linear-gradient(145deg,#2A1200,#0D0500)",
     },
     {
-      initials: "AG",
-      img: imgGhnimat,
-      imgPosition: "center top",
-      name: "Ahmed Ghnimat",
-      role: "Cybersecurity Ops Manager · JODDB",
-      desc: "15+ years in IT and security. Specializes in incident response, security operations, and building secure enterprise systems.",
-      bg: "linear-gradient(160deg,#001510,#0D0500)",
+      initials: "TE",
+      img: imgTariqElouzeh,
+      imgPosition: "10% 20%",
+      keynoteLabel: "Second Keynote",
+      title: "Software Engineering in the Age of AI",
+      sub: "How AI is transforming the way we build software.",
+      name: "Tariq Elouzeh",
+      bio: "Senior Software Automation Engineer at Apple with over 15 years of experience in software engineering and distributed systems. Previously worked at Twitter and IBM. Well-known mentor and content creator in the Arab tech community.",
+      bg: "linear-gradient(145deg,#1E0800,#0D0400)",
     },
     {
       initials: "OI",
       img: imgIsmail,
       imgPosition: "center top",
+      keynoteLabel: "Third Keynote",
+      title: "Software Engineering Fields & Job Market in 2026",
+      sub: "Domains, career paths, and what employers demand.",
       name: "Omar Ismail",
-      role: "Tech Lead · Digitinary",
-      desc: "Leads digital banking and Open Banking solutions with deep expertise in Java, Spring Boot, and AWS across fintech environments.",
-      bg: "linear-gradient(160deg,#0A0015,#0D0500)",
+      bio: "A Tech Lead at Digitinary, leading the development of digital banking and Open Banking solutions. Extensive experience building scalable systems using Java, Spring Boot, and AWS in fintech environments.",
+      bg: "linear-gradient(145deg,#1A0600,#0D0400)",
     },
   ];
 
-  const cardAnim = (i) => ({
-    opacity: v ? 1 : 0,
-    transform: v ? "scale(1)" : "scale(0.5)",
-    transition: `opacity 0.9s cubic-bezier(.34,1.56,.64,1) ${0.28 + i * 0.14}s, transform 0.9s cubic-bezier(.34,1.56,.64,1) ${0.28 + i * 0.14}s`,
-  });
-
   return (
-    <section
-      className="section"
-      id="panel"
-      style={{ background: "var(--bg)" }}
-      ref={ref}
-    >
-      <div
-        style={{
-          maxWidth: 1200,
-          margin: "0 auto",
-          padding: "0 clamp(20px, 5vw, 56px)",
-          width: "100%",
-        }}
-      >
-        <div
-          className="two-col"
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: 60,
-            alignItems: "center",
-          }}
-        >
-          {/* Left — text */}
-          <div>
-            <span
-              style={{
-                ...anim(v, 0),
-                display: "block",
-                fontFamily: "'DM Sans'",
-                fontSize: 11,
-                color: "var(--gold)",
-                letterSpacing: "0.22em",
-                textTransform: "uppercase",
-                marginBottom: 10,
-              }}
-            >
-              Panel Discussion
-            </span>
-            <h2
-              style={{
-                ...anim(v, 0.1),
-                fontFamily: "'Bebas Neue'",
-                fontSize: "clamp(44px, 5.5vw, 68px)",
-                color: "var(--cream)",
-                lineHeight: 0.9,
-              }}
-            >
-              THE IT JOB MARKET IN 2026:
-              <br />
-              <span style={{ color: "var(--gold)" }}>SKILLS, REALITY</span>
-              <br />
-              &amp; OPPORTUNITIES
-            </h2>
-            <p
-              style={{
-                ...anim(v, 0.22),
-                fontFamily: "'DM Sans'",
-                color: "var(--muted)",
-                fontSize: 15,
-                lineHeight: 1.85,
-                marginTop: 22,
-              }}
-            >
-              Industry experts will explore the current and future state of the
-              IT job market — focusing on skills truly in demand, the reality of
-              different tech fields, and real opportunities for students and
-              fresh graduates.
-            </p>
-            <div
-              style={{
-                ...anim(v, 0.32),
-                marginTop: 28,
-                padding: "14px 18px",
-                borderRadius: 12,
-                background: "rgba(245,166,35,0.05)",
-                border: "1px solid rgba(245,166,35,0.12)",
-              }}
-            >
-              <p
-                style={{
-                  fontFamily: "'DM Sans'",
-                  fontSize: 13,
-                  color: "var(--muted)",
-                }}
-              >
-                After completing the three keynote sessions, participants join a
-                moderated panel to get real-world hiring insights.
-              </p>
-            </div>
-          </div>
-
-          {/* Right — bento cards */}
-          <div
-            className="two-col"
-            style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}
-          >
-            {/* Tall left card — first panelist */}
-            <div
-              className="card panel-tall"
-              style={{
-                gridRow: "1 / 3",
-                borderRadius: 20,
-                border: "1px solid rgba(245,166,35,0.14)",
-                height: window.innerWidth < 768 ? "auto" : 574,
-                minHeight: 280,
-                overflow: "hidden",
-                position: "relative",
-                background: panelists[0].bg,
-                ...cardAnim(0),
-              }}
-            >
-              {panelists[0].img && (
-                <img
-                  src={panelists[0].img}
-                  alt={panelists[0].name}
-                  className="yazan-img"
-                  style={{
-                    position: "absolute",
-                    inset: 0,
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    objectPosition: panelists[0].imgPosition ?? "center top",
-                    display: "block",
-                  }}
-                />
-              )}
-              <div
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  background:
-                    "linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, rgba(8,3,0,0.55) 55%, rgba(8,3,0,0.92) 100%)",
-                  pointerEvents: "none",
-                }}
-              />
-              <div
-                style={{
-                  position: "relative",
-                  zIndex: 1,
-                  height: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "flex-end",
-                  padding: "22px 20px",
-                }}
-              >
-                <div
-                  style={{
-                    fontFamily: "'Bebas Neue'",
-                    fontSize: 44,
-                    color: "var(--gold)",
-                    lineHeight: 1,
-                    marginBottom: 6,
-                  }}
-                >
-                  {panelists[0].initials}
-                </div>
-                <div
-                  style={{
-                    fontFamily: "'Syne'",
-                    fontWeight: 700,
-                    color: "var(--cream)",
-                    fontSize: 14,
-                  }}
-                >
-                  {panelists[0].name}
-                </div>
-                <div
-                  style={{
-                    fontFamily: "'DM Sans'",
-                    fontSize: 11,
-                    color: "var(--gold)",
-                    marginTop: 3,
-                  }}
-                >
-                  {panelists[0].role}
-                </div>
-                <div
-                  style={{
-                    fontFamily: "'DM Sans'",
-                    fontSize: 11,
-                    color: "rgba(220,210,195,0.9)",
-                    marginTop: 8,
-                    lineHeight: 1.65,
-                  }}
-                >
-                  {panelists[0].desc}
-                </div>
-              </div>
-            </div>
-
-            {/* Two smaller right cards */}
-            {panelists.slice(1).map((p, i) => (
-              <div
-                key={i}
-                className="card"
-                style={{
-                  borderRadius: 18,
-                  border: "1px solid rgba(245,166,35,0.12)",
-                  height: 280,
-                  overflow: "hidden",
-                  position: "relative",
-                  background: p.bg,
-                  ...cardAnim(i + 1),
-                }}
-              >
-                {p.img && (
-                  <img
-                    src={p.img}
-                    alt={p.name}
-                    style={{
-                      position: "absolute",
-                      inset: 0,
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                      objectPosition: p.imgPosition ?? "center top",
-                      display: "block",
-                    }}
-                  />
-                )}
-                {/* Stronger scrim for legibility */}
-                <div
-                  style={{
-                    position: "absolute",
-                    inset: 0,
-                    background:
-                      "linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.5) 40%, rgba(8,3,0,0.96) 75%, rgba(8,3,0,1) 100%)",
-                    pointerEvents: "none",
-                  }}
-                />
-                <div
-                  style={{
-                    position: "relative",
-                    zIndex: 1,
-                    height: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "flex-end",
-                    padding: "18px 18px",
-                  }}
-                >
-                  <div
-                    style={{
-                      fontFamily: "'Bebas Neue'",
-                      fontSize: 28,
-                      color: "var(--gold)",
-                      lineHeight: 1,
-                    }}
-                  >
-                    {p.initials}
-                  </div>
-                  <div
-                    style={{
-                      fontFamily: "'Syne'",
-                      fontWeight: 700,
-                      color: "#FFFFFF",
-                      fontSize: 14,
-                      marginTop: 6,
-                    }}
-                  >
-                    {p.name}
-                  </div>
-                  <div
-                    style={{
-                      fontFamily: "'DM Sans'",
-                      fontSize: 11,
-                      color: "var(--gold)",
-                      marginTop: 3,
-                      fontWeight: 600,
-                    }}
-                  >
-                    {p.role}
-                  </div>
-                  <div
-                    style={{
-                      fontFamily: "'DM Sans'",
-                      fontSize: 11,
-                      color: "rgba(220,210,195,0.9)",
-                      marginTop: 7,
-                      lineHeight: 1.65,
-                    }}
-                  >
-                    {p.desc}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-/* ─────────────────────────────────────── */
-/*  8. AGENDA                              */
-/* ─────────────────────────────────────── */
-function Agenda() {
-  const [ref, v] = useInView(0.2);
-
-  const days = [
-    {
-      date: "27 April 2026",
-      label: "Day 1",
-      field: "Cybersecurity",
-      color: "#2ECC71",
-      items: [
-        { time: "5:00 – 5:15 PM", title: "Opening & Welcome", type: "open" },
-        {
-          time: "5:15 – 6:45 PM",
-          title: "Cybersecurity Keynote",
-          sub: "Aladdin Dandis · incl. Q&A",
-          type: "key",
-        },
-        { time: "6:45 – 7:00 PM", title: "Break", type: "brk" },
-        {
-          time: "7:00 – 8:00 PM",
-          title: "Panel: IT Job Market 2026",
-          sub: "Skills, Reality & Opportunities",
-          type: "pnl",
-        },
-        { time: "8:00 – 8:15 PM", title: "Closing & Q&A", type: "cls" },
-      ],
-    },
-    {
-      date: "28 April 2026",
-      label: "Day 2",
-      field: "Artificial Intelligence",
-      color: "#9B59B6",
-      items: [
-        { time: "5:00 – 5:10 PM", title: "Day 2 Opening", type: "open" },
-        {
-          time: "5:10 – 6:40 PM",
-          title: "AI Keynote",
-          sub: "Abdullah Alghwairi · incl. Q&A",
-          type: "key",
-        },
-        { time: "6:40 – 6:55 PM", title: "Break", type: "brk" },
-        {
-          time: "6:55 – 7:45 PM",
-          title: "Kahoot Activity + Discussion",
-          type: "act",
-        },
-        { time: "7:45 – 8:00 PM", title: "Closing", type: "cls" },
-      ],
-    },
-    {
-      date: "29 April 2026",
-      label: "Day 3",
-      field: "Software Engineering",
-      color: "#E8891A",
-      items: [
-        { time: "5:00 – 5:10 PM", title: "Day 3 Opening", type: "open" },
-        {
-          time: "5:10 – 6:40 PM",
-          title: "Software Engineering Keynote",
-          sub: "Mohammed Abu-Hadhoud · incl. Q&A",
-          type: "key",
-        },
-        { time: "6:40 – 6:55 PM", title: "Break", type: "brk" },
-        { time: "6:55 – 7:45 PM", title: "Open Q&A + Networking", type: "pnl" },
-        {
-          time: "7:45 – 8:00 PM",
-          title: "Series Closing Ceremony",
-          type: "cls",
-        },
-      ],
-    },
-  ];
-
-  const tc = {
-    open: "#F5A623",
-    key: "#E8891A",
-    brk: "#4A3C2A",
-    act: "#4CAF7B",
-    pnl: "#FF6B35",
-    cls: "#F5A623",
-  };
-
-  return (
-    <section
-      className="section"
-      id="agenda"
-      ref={ref}
-      style={{ background: "var(--bg2)" }}
-    >
-      <div
-        style={{
-          maxWidth: 1200,
-          margin: "0 auto",
-          padding: "0 clamp(20px, 5vw, 56px)",
-          width: "100%",
-        }}
-      >
-        <div style={{ ...anim(v, 0), marginBottom: 36 }}>
-          <span
-            style={{
-              fontFamily: "'DM Sans'",
-              fontSize: 11,
-              color: "var(--gold)",
-              letterSpacing: "0.22em",
-              textTransform: "uppercase",
-            }}
-          >
-            27 – 29 April 2026
-          </span>
-          <h2
-            style={{
-              fontFamily: "'Bebas Neue'",
-              fontSize: "clamp(48px, 6vw, 72px)",
-              color: "var(--cream)",
-              lineHeight: 0.88,
-              marginTop: 6,
-            }}
-          >
-            EVENT <span style={{ color: "var(--gold)" }}>AGENDA</span>
-          </h2>
-        </div>
-
-        <div
-          className="two-col"
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr 1fr",
-            gap: 18,
-          }}
-        >
-          {days.map((day, di) => (
-            <div
-              key={di}
-              style={{
-                borderRadius: 16,
-                border: `1px solid ${day.color}22`,
-                background: "rgba(245,166,35,0.02)",
-                overflow: "hidden",
-                opacity: v ? 1 : 0,
-                transform: v ? "translateY(0)" : "translateY(24px)",
-                transition: `all 0.8s ease ${0.1 + di * 0.14}s`,
-              }}
-            >
-              {/* Day header */}
-              <div
-                style={{
-                  padding: "14px 18px",
-                  borderBottom: `1px solid ${day.color}22`,
-                  background: `${day.color}08`,
-                }}
-              >
-                <div
-                  style={{
-                    fontFamily: "'Bebas Neue'",
-                    fontSize: 11,
-                    color: day.color,
-                    letterSpacing: "0.2em",
-                  }}
-                >
-                  {day.label}
-                </div>
-                <div
-                  style={{
-                    fontFamily: "'Syne'",
-                    fontWeight: 700,
-                    color: "var(--cream)",
-                    fontSize: 15,
-                    marginTop: 2,
-                  }}
-                >
-                  {day.field}
-                </div>
-                <div
-                  style={{
-                    fontFamily: "'DM Sans'",
-                    fontSize: 11,
-                    color: "var(--muted)",
-                    marginTop: 2,
-                  }}
-                >
-                  {day.date}
-                </div>
-              </div>
-
-              {/* Items */}
-              <div style={{ padding: "10px 0" }}>
-                {day.items.map((item, ii) => (
-                  <div
-                    key={ii}
-                    style={{
-                      display: "flex",
-                      gap: 14,
-                      padding: "10px 18px",
-                      alignItems: "flex-start",
-                      borderBottom:
-                        ii < day.items.length - 1
-                          ? "1px solid rgba(245,166,35,0.05)"
-                          : "none",
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: 3,
-                        borderRadius: 2,
-                        background: tc[item.type],
-                        flexShrink: 0,
-                        alignSelf: "stretch",
-                        minHeight: 20,
-                      }}
-                    />
-                    <div style={{ flex: 1 }}>
-                      <div
-                        style={{
-                          fontFamily: "'DM Sans'",
-                          fontSize: 10,
-                          color: "var(--muted)",
-                          marginBottom: 2,
-                        }}
-                      >
-                        {item.time}
-                      </div>
-                      <div
-                        style={{
-                          fontFamily: "'Syne'",
-                          fontWeight: 700,
-                          color: "var(--cream)",
-                          fontSize: 13,
-                        }}
-                      >
-                        {item.title}
-                      </div>
-                      {item.sub && (
-                        <div
-                          style={{
-                            fontFamily: "'DM Sans'",
-                            fontSize: 11,
-                            color: tc[item.type],
-                            marginTop: 2,
-                            lineHeight: 1.4,
-                          }}
-                        >
-                          {item.sub}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
+    <WebinarSection
+      id="webinar-software"
+      day="Day 3"
+      date="29 April 2026"
+      field="Software Engineering"
+      description="A 3-hour journey through software engineering — from building your first real system, to understanding how AI is reshaping the developer's role, to exploring the software engineering job market and its opportunities in 2026."
+      accent="#E8891A"
+      hoverBg="linear-gradient(145deg,#4A2800,#2A1000)"
+      bg="var(--bg3)"
+      speakers={speakers}
+    />
   );
 }
 
@@ -2496,7 +1873,7 @@ function Outcomes() {
               marginTop: 8,
             }}
           >
-            EVENT <span style={{ color: "var(--gold)" }}>OUTCOMES</span>
+            WEBINARS <span style={{ color: "var(--gold)" }}>OUTCOMES</span>
           </h2>
         </div>
         <div
@@ -2574,9 +1951,9 @@ function Outcomes() {
   );
 }
 
-/* ─────────────────────────────────────── */
-/*  10. FOOTER (ConnectSphere style)       */
-/* ─────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════════════════════════
+   10. FOOTER
+══════════════════════════════════════════════════════════════════════════════ */
 function Footer() {
   const socials = [
     {
@@ -2595,17 +1972,13 @@ function Footer() {
       url: "https://www.facebook.com/IEEECSJU",
     },
   ];
-
   const sections = [
     { label: "About IEEE", id: "about" },
-    { label: "Keynotes", id: "keynotes" },
-    { label: "Panel", id: "panel" },
-    { label: "Agenda", id: "agenda" },
-    { label: "Outcomes", id: "outcomes" },
+    { label: "About the Event", id: "event" },
+    { label: "Cybersecurity Webinar", id: "webinar-cyber" },
+    { label: "AI Webinar", id: "webinar-ai" },
+    { label: "Software Eng. Webinar", id: "webinar-software" },
   ];
-
-  const scrollTo = (id) =>
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
 
   return (
     <section
@@ -2622,13 +1995,12 @@ function Footer() {
           width: "100%",
           maxWidth: 1200,
           margin: "0 auto",
-          padding: "0 clamp(20px, 5vw, 48px)",
+          padding: "0 clamp(20px,5vw,48px)",
           display: "flex",
           flexDirection: "column",
-          gap: 0,
         }}
       >
-        {/* Top — brand + nav + socials */}
+        {/* Top 3-col grid */}
         <div
           className="two-col"
           style={{
@@ -2691,7 +2063,7 @@ function Footer() {
             </p>
           </div>
 
-          {/* Section navigation */}
+          {/* Navigation */}
           <div>
             <div
               style={{
@@ -2783,8 +2155,6 @@ function Footer() {
                 </span>
               </a>
             ))}
-
-            {/* Divider */}
             <div
               style={{
                 height: 1,
@@ -2792,8 +2162,6 @@ function Footer() {
                 margin: "16px 0",
               }}
             />
-
-            {/* Contacts */}
             <div style={{ marginBottom: 10 }}>
               <div
                 style={{
@@ -2847,7 +2215,7 @@ function Footer() {
           </div>
         </div>
 
-        {/* Bottom copyright */}
+        {/* Copyright */}
         <div
           style={{
             paddingTop: 24,
@@ -2883,22 +2251,22 @@ function Footer() {
   );
 }
 
-/* ─────────────────────────────────────── */
-/*  ROOT                                   */
-/* ─────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════════════════════════
+   ROOT
+══════════════════════════════════════════════════════════════════════════════ */
 export default function App() {
   return (
     <>
       <style>{STYLES}</style>
-      <div className="snap-wrap" style={{ "--snap-duration": "1.2s" }}>
+      <div className="snap-wrap">
         <Hero />
         <FilmStrip />
         <AboutIEEE />
         <IEEEBranch />
         <AboutEvent />
-        <Keynotes />
-        <Panel />
-        <Agenda />
+        <WebinarCyber />
+        <WebinarAI />
+        <WebinarSoftware />
         <Outcomes />
         <Footer />
       </div>
