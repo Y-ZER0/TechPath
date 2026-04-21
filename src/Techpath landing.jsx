@@ -136,6 +136,14 @@ html,body{height:100%;overflow:hidden;}
   .panel-small{height:220px!important;}
   .yazan-img{object-position:10% 30%!important;}
 }
+
+@media(max-width:1400px){
+  .flip-cluster{ transform:scale(0.82); transform-origin:top right; }
+}
+@media(max-width:1100px){
+  .flip-cluster{ transform:scale(0.68); transform-origin:top right; }
+}
+
 `;
 
 /* ══════════════════════════════════════════════════════════════════════════════
@@ -166,221 +174,6 @@ const anim = (visible, delay = 0, extra = {}) => ({
 
 const scrollTo = (id) =>
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-
-/* ══════════════════════════════════════════════════════════════════════════════
-   SPEAKER CARD — shared between all three webinar sections
-══════════════════════════════════════════════════════════════════════════════ */
-function SpeakerCard({ speaker, index, visible, accent, hoverBg }) {
-  const [hov, setHov] = useState(false);
-  return (
-    <div
-      onMouseEnter={() => setHov(true)}
-      onMouseLeave={() => setHov(false)}
-      style={{
-        background: hov ? hoverBg : speaker.bg,
-        borderRadius: 20,
-        border: `1px solid ${hov ? accent + "55" : "rgba(245,166,35,0.12)"}`,
-        padding: "28px",
-        position: "relative",
-        overflow: "hidden",
-        cursor: "pointer",
-        transform: hov
-          ? "translateY(-8px) scale(1.015)"
-          : "translateY(0) scale(1)",
-        boxShadow: hov
-          ? `0 24px 60px rgba(0,0,0,0.5), 0 0 0 1px ${accent}33`
-          : "none",
-        transition: "all 0.55s cubic-bezier(.22,1,.36,1)",
-        opacity: visible ? 1 : 0,
-        transform: visible
-          ? hov
-            ? "translateY(-8px) scale(1.015)"
-            : "translateY(0)"
-          : "translateY(36px)",
-        transition: `opacity 0.9s ease ${0.15 + index * 0.15}s, transform 0.9s ease ${0.15 + index * 0.15}s, box-shadow 0.55s ease`,
-      }}
-    >
-      {/* Accent glow */}
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          pointerEvents: "none",
-          background: `radial-gradient(ellipse 80% 60% at 50% 0%, ${accent}18 0%, transparent 70%)`,
-          opacity: hov ? 1 : 0,
-          transition: "opacity 0.55s ease",
-        }}
-      />
-
-      {/* Keynote number watermark */}
-      <div
-        style={{
-          position: "absolute",
-          top: 14,
-          right: 18,
-          fontFamily: "'Bebas Neue'",
-          fontSize: 60,
-          lineHeight: 1,
-          color: hov ? accent + "22" : "rgba(245,166,35,0.06)",
-          pointerEvents: "none",
-          transition: "color 0.55s ease",
-        }}
-      >
-        {String(index + 1).padStart(2, "0")}
-      </div>
-
-      {/* Speaker image */}
-      <div
-        style={{
-          width: "100%",
-          height: 200,
-          borderRadius: 14,
-          overflow: "hidden",
-          marginBottom: 18,
-          position: "relative",
-        }}
-      >
-        {speaker.img ? (
-          <img
-            src={speaker.img}
-            alt={speaker.name}
-            style={{
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-              objectPosition: speaker.imgPosition ?? "center top",
-              filter: hov
-                ? "grayscale(0%) brightness(1)"
-                : "grayscale(100%) brightness(0.55)",
-              transform: hov ? "scale(1.05)" : "scale(1)",
-              transition: "filter 0.65s ease, transform 0.65s ease",
-            }}
-          />
-        ) : (
-          <div
-            style={{
-              width: "100%",
-              height: "100%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              background: "rgba(245,166,35,0.08)",
-              fontFamily: "'Bebas Neue'",
-              fontSize: 48,
-              color: hov ? accent : "var(--gold)",
-              transition: "color 0.45s ease",
-            }}
-          >
-            {speaker.initials}
-          </div>
-        )}
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: hov ? "transparent" : "rgba(8,3,0,0.35)",
-            transition: "background 0.65s ease",
-            pointerEvents: "none",
-          }}
-        />
-      </div>
-
-      {/* Keynote label */}
-      <span
-        style={{
-          fontFamily: "'DM Sans'",
-          fontSize: 10,
-          color: hov ? accent : "var(--gold)",
-          letterSpacing: "0.16em",
-          textTransform: "uppercase",
-          transition: "color 0.45s ease",
-        }}
-      >
-        {speaker.keynoteLabel}
-      </span>
-
-      <h3
-        style={{
-          fontFamily: "'Syne'",
-          fontWeight: 800,
-          fontSize: 17,
-          color: "var(--cream)",
-          margin: "7px 0 5px",
-          lineHeight: 1.25,
-        }}
-      >
-        {speaker.title}
-      </h3>
-      <p
-        style={{
-          fontFamily: "'DM Sans'",
-          fontSize: 12,
-          color: hov ? accent + "CC" : "rgba(245,166,35,0.75)",
-          marginBottom: 14,
-          lineHeight: 1.5,
-          transition: "color 0.45s ease",
-        }}
-      >
-        {speaker.sub}
-      </p>
-
-      <div
-        style={{
-          height: 1,
-          background: hov ? accent + "44" : "rgba(245,166,35,0.08)",
-          marginBottom: 14,
-          transition: "background 0.45s ease",
-        }}
-      />
-
-      <p
-        style={{
-          fontFamily: "'Syne'",
-          fontWeight: 700,
-          color: "var(--cream)",
-          fontSize: 14,
-        }}
-      >
-        {speaker.name}
-      </p>
-      <p
-        style={{
-          fontFamily: "'DM Sans'",
-          fontSize: 12,
-          color: "var(--muted)",
-          marginTop: 8,
-          lineHeight: 1.75,
-        }}
-      >
-        {speaker.bio}
-      </p>
-
-      {/* Hover hint */}
-      <div
-        style={{
-          marginTop: 14,
-          display: "flex",
-          alignItems: "center",
-          gap: 6,
-          opacity: hov ? 0 : 0.35,
-          transition: "opacity 0.3s ease",
-        }}
-      >
-        <div style={{ width: 14, height: 1, background: "var(--gold)" }} />
-        <span
-          style={{
-            fontFamily: "'DM Sans'",
-            fontSize: 10,
-            color: "var(--gold)",
-            letterSpacing: "0.12em",
-          }}
-        >
-          HOVER FOR MORE
-        </span>
-      </div>
-    </div>
-  );
-}
 
 /* ══════════════════════════════════════════════════════════════════════════════
    1. HERO
@@ -623,42 +416,42 @@ function FilmStrip() {
     {
       initials: "AD",
       name: "Aladdin Dandis",
-      role: "Cybersecurity",
+      role: "Cybersecurity consultant, educator, and technology leader",
       bg: "#001209",
       img: imgDandis,
     },
     {
       initials: "RT",
-      name: "Rami Al-Tamimi",
-      role: "AI & Cybersecurity",
+      name: "Ramy AlDamati",
+      role: "AI Governance, Risk & Security Leader , Founder and Architect of AI-SAAF™",
       bg: "#001800",
       img: imgRamyAlDamati,
     },
     {
       initials: "AT",
       name: "Ali Tamimi",
-      role: "Cybersecurity",
+      role: "Cybersecurity executive and technology leader, Founder & CEO of Hayyan Horizons",
       bg: "#001800",
       img: imgAliAlTamimi,
     },
     {
       initials: "AA",
       name: "Abdullah Alghwairi",
-      role: "AI & Product Lead",
+      role: "AI Product Manager & CEO of Kernel for AI Solutions",
       bg: "#0A0018",
       img: imgAlghwairi,
     },
     {
       initials: "GH",
       name: "Ghaith Hammouri",
-      role: "AI & Cybersecurity",
+      role: "Founder, a Researcher, and an AI Systems Architect & Co-Founder of Thakaa",
       bg: "#001800",
       img: imgGhaithHammouri,
     },
     {
       initials: "YS",
       name: "Yazan Shannak",
-      role: "AI Manager",
+      role: "AI Manager @ Revest",
       bg: "#001820",
       img: imgShannak,
       objectPosition: "10% 50%",
@@ -666,21 +459,21 @@ function FilmStrip() {
     {
       initials: "MA",
       name: "Mohammed Abu-Hadhoud",
-      role: "Software Engineering",
+      role: "Founder & CEO of Programming Advices & Epya Solutions",
       bg: "#1E0A00",
       img: imgAbuHadhoud,
     },
     {
       initials: "TE",
       name: "Tariq Elouzeh",
-      role: "Senior Software Automation Engineer",
+      role: "Senior Software Automation Engineer @ Apple",
       bg: "#001800",
       img: imgTariqElouzeh,
     },
     {
       initials: "OI",
       name: "Omar Ismail",
-      role: "Tech Lead",
+      role: "Tech Lead & Software Engineer @ Digitinary",
       bg: "#001800",
       img: imgIsmail,
     },
@@ -971,11 +764,11 @@ function AboutIEEE() {
         {/* Desktop flip cards */}
         <div
           className="flip-cluster"
-          style={{ position: "relative", height: 680 }}
+          style={{ position: "relative", height: 600 }}
         >
           {[
             {
-              top: -10,
+              top: -50,
               left: "20%",
               w: 450,
               h: 380,
@@ -992,10 +785,10 @@ function AboutIEEE() {
             {
               top: "auto",
               bottom: -10,
-              right: -200,
+              right: -150,
               w: 300,
               h: 240,
-              rot: "-1.5deg",
+              rot: "-3.5deg",
               delay: 0.65,
               frontBg: "linear-gradient(135deg,#1A1000,#0D0500)",
               frontTitle: "Outstanding Chapter",
@@ -1007,11 +800,11 @@ function AboutIEEE() {
             },
             {
               top: "auto",
-              bottom: 10,
+              bottom: -30,
               right: 280,
               w: 280,
               h: 260,
-              rot: "1.5deg",
+              rot: "2.5deg",
               delay: 0.65,
               frontBg: "linear-gradient(135deg,#100A00,#0D0500)",
               frontTitle: "Best Chapter Region 8",
@@ -1238,186 +1031,7 @@ function AboutIEEE() {
 }
 
 /* ══════════════════════════════════════════════════════════════════════════════
-   4. IEEE CS UJ BRANCH
-══════════════════════════════════════════════════════════════════════════════ */
-function IEEEBranch() {
-  const [ref, v] = useInView(0.25);
-  const goals = [
-    {
-      n: "01",
-      title: "Hands-On Exposure",
-      desc: "Provide our volunteers with hands-on exposure to their respective fields.",
-    },
-    {
-      n: "02",
-      title: "Extensive Network",
-      desc: "Establish an extensive network of connections for our volunteers.",
-    },
-    {
-      n: "03",
-      title: "Community Enhancement",
-      desc: "Enhance the organization and usability of the community for our volunteers.",
-    },
-    {
-      n: "04",
-      title: "Skills Development",
-      desc: "Foster the development and enhancement of their technical and soft skills.",
-    },
-  ];
-  return (
-    <section className="section" style={{ background: "var(--bg2)" }} ref={ref}>
-      <div
-        style={{
-          maxWidth: 1200,
-          margin: "0 auto",
-          padding: "0 clamp(20px,5vw,56px)",
-          width: "100%",
-        }}
-      >
-        <span
-          style={{
-            ...anim(v, 0),
-            display: "block",
-            fontFamily: "'DM Sans'",
-            fontSize: 11,
-            color: "var(--gold)",
-            letterSpacing: "0.22em",
-            textTransform: "uppercase",
-            marginBottom: 8,
-          }}
-        >
-          IEEE Computer Society · UJ Branch · Est. 2017
-        </span>
-        <div
-          className="two-col"
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: 60,
-            alignItems: "start",
-          }}
-        >
-          <div>
-            <h2
-              style={{
-                ...anim(v, 0.1),
-                fontFamily: "'Bebas Neue'",
-                fontSize: "clamp(48px,6vw,80px)",
-                color: "var(--cream)",
-                lineHeight: 0.88,
-              }}
-            >
-              OUR
-              <br />
-              <span style={{ color: "var(--gold)" }}>VISION</span>
-              <br />
-              &amp; GOALS
-            </h2>
-            <p
-              style={{
-                ...anim(v, 0.22),
-                fontFamily: "'DM Sans'",
-                color: "var(--muted)",
-                fontSize: 15,
-                lineHeight: 1.85,
-                marginTop: 22,
-              }}
-            >
-              We envision a bridge between students and the business industry —
-              empowering students with knowledge, skills, and connections to
-              facilitate a seamless transition into the professional world.
-            </p>
-            <div
-              style={{
-                ...anim(v, 0.36),
-                marginTop: 28,
-                padding: "18px 20px",
-                borderLeft: "3px solid var(--gold)",
-                background: "rgba(245,166,35,0.04)",
-                borderRadius: "0 12px 12px 0",
-              }}
-            >
-              <p
-                style={{
-                  fontFamily: "'Syne'",
-                  fontWeight: 700,
-                  color: "var(--cream)",
-                  fontSize: 14,
-                  lineHeight: 1.6,
-                  fontStyle: "italic",
-                }}
-              >
-                "IEEE is the catalyst that fills the gap, propelling students
-                towards limitless potential."
-              </p>
-            </div>
-          </div>
-          <div>
-            {goals.map((g, i) => (
-              <div
-                key={i}
-                style={{
-                  padding: "20px 0",
-                  borderTop: "1px solid rgba(245,166,35,0.1)",
-                  display: "grid",
-                  gridTemplateColumns: "42px 1fr",
-                  gap: 18,
-                  opacity: v ? 1 : 0,
-                  transform: v ? "translateX(0)" : "translateX(28px)",
-                  transition: `all 0.85s cubic-bezier(.22,1,.36,1) ${0.28 + i * 0.14}s`,
-                }}
-              >
-                <div
-                  style={{
-                    fontFamily: "'Bebas Neue'",
-                    fontSize: 30,
-                    color: "rgba(245,166,35,0.25)",
-                    lineHeight: 1,
-                  }}
-                >
-                  {g.n}
-                </div>
-                <div>
-                  <div
-                    style={{
-                      fontFamily: "'Syne'",
-                      fontWeight: 700,
-                      color: "var(--cream)",
-                      fontSize: 14,
-                      marginBottom: 5,
-                    }}
-                  >
-                    {g.title}
-                  </div>
-                  <div
-                    style={{
-                      fontFamily: "'DM Sans'",
-                      color: "var(--muted)",
-                      fontSize: 13,
-                      lineHeight: 1.7,
-                    }}
-                  >
-                    {g.desc}
-                  </div>
-                </div>
-              </div>
-            ))}
-            <div
-              style={{
-                borderTop: "1px solid rgba(245,166,35,0.1)",
-                opacity: v ? 1 : 0,
-                transition: "opacity 1s ease 1s",
-              }}
-            />
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ══════════════════════════════════════════════════════════════════════════════
-   5. ABOUT THE EVENT  (updated content from new PDF)
+   4. ABOUT THE EVENT  (updated content from new PDF)
 ══════════════════════════════════════════════════════════════════════════════ */
 function AboutEvent() {
   const [ref, v] = useInView(0.25);
@@ -1644,7 +1258,7 @@ function AboutEvent() {
 }
 
 /* ══════════════════════════════════════════════════════════════════════════════
-   6. CYBERSECURITY WEBINAR — Day 1 · 27 April
+   5. CYBERSECURITY WEBINAR — Day 1 · 27 April
 ══════════════════════════════════════════════════════════════════════════════ */
 export function WebinarCyber() {
   const speakers = [
@@ -1700,7 +1314,7 @@ export function WebinarCyber() {
 }
 
 /* ══════════════════════════════════════════════════════════════════════════════
-   7. AI WEBINAR — Day 2 · 28 April
+   6. AI WEBINAR — Day 2 · 28 April
 ══════════════════════════════════════════════════════════════════════════════ */
 export function WebinarAI() {
   const speakers = [
@@ -1755,7 +1369,7 @@ export function WebinarAI() {
 }
 
 /* ══════════════════════════════════════════════════════════════════════════════
-   8. SOFTWARE ENGINEERING WEBINAR — Day 3 · 29 April
+   7. SOFTWARE ENGINEERING WEBINAR — Day 3 · 29 April
 ══════════════════════════════════════════════════════════════════════════════ */
 export function WebinarSoftware() {
   const speakers = [
@@ -1811,7 +1425,7 @@ export function WebinarSoftware() {
 }
 
 /* ─────────────────────────────────────── */
-/*  9. OUTCOMES  (balanced-sound reveal)   */
+/*  8. OUTCOMES  (balanced-sound reveal)   */
 /* ─────────────────────────────────────── */
 function Outcomes() {
   const [ref, v] = useInView(0.25);
@@ -1952,7 +1566,7 @@ function Outcomes() {
 }
 
 /* ══════════════════════════════════════════════════════════════════════════════
-   10. FOOTER
+   9. FOOTER
 ══════════════════════════════════════════════════════════════════════════════ */
 function Footer() {
   const socials = [
@@ -2262,7 +1876,6 @@ export default function App() {
         <Hero />
         <FilmStrip />
         <AboutIEEE />
-        <IEEEBranch />
         <AboutEvent />
         <WebinarCyber />
         <WebinarAI />

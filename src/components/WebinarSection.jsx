@@ -51,10 +51,13 @@ export function WebinarSection({
           </h2>
           <p
             style={{
-              color: "var(--muted)",
+              fontFamily: "'Syne'", // ← matches the webinar title font
+              fontWeight: 400,
+              color: "rgba(245,237,224,0.9)", // ← near-white, high contrast on dark bg
               maxWidth: 600,
               marginTop: 16,
-              lineHeight: 1.6,
+              lineHeight: 1.7,
+              fontSize: "clamp(14px, 1.2vw, 16px)",
             }}
           >
             {description}
