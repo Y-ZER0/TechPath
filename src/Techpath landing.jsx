@@ -137,11 +137,16 @@ html,body{height:100%;overflow:hidden;}
   .yazan-img{object-position:10% 30%!important;}
 }
 
+/* Mid screens: hide absolute cluster, show vertical stack */
 @media(max-width:1400px){
-  .flip-cluster{ transform:scale(0.82); transform-origin:top right; }
+  .flip-cluster{ display:none !important; }
+  .flip-vertical{ display:flex !important; }
 }
-@media(max-width:1100px){
-  .flip-cluster{ transform:scale(0.68); transform-origin:top right; }
+
+/* Mobile: hide vertical stack, show flat cards */
+@media(max-width:768px){
+  .flip-vertical{ display:none !important; }
+  .flip-mobile{ display:flex !important; }
 }
 
 `;
@@ -759,19 +764,17 @@ function AboutIEEE() {
           </div>
         </div>
 
-        {/* Right: asymmetric award cards */}
-        {/* Right: 3D flip award cards */}
-        {/* Desktop flip cards */}
+        {/* Desktop: absolute stacked cards */}
         <div
           className="flip-cluster"
-          style={{ position: "relative", height: 600 }}
+          style={{ position: "relative", height: 620 }}
         >
           {[
             {
-              top: -50,
+              top: 0,
               left: "20%",
-              w: 450,
-              h: 380,
+              w: 360,
+              h: 340,
               rot: "-3deg",
               delay: 0.35,
               frontBg: "linear-gradient(145deg,#2A1500,#150800)",
@@ -783,13 +786,12 @@ function AboutIEEE() {
                 "A student-led club dedicated to computer science and technology at the University of Jordan since 2017.",
             },
             {
-              top: "auto",
-              bottom: -10,
-              right: -150,
+              top: 400,
+              left: "-10%",
               w: 300,
               h: 240,
-              rot: "-3.5deg",
-              delay: 0.65,
+              rot: "2deg",
+              delay: 0.5,
               frontBg: "linear-gradient(135deg,#1A1000,#0D0500)",
               frontTitle: "Outstanding Chapter",
               frontSub: "2023 · 1st in Middle East",
@@ -799,12 +801,11 @@ function AboutIEEE() {
                 "First IEEE CS chapter in the Middle East to receive this honor.",
             },
             {
-              top: "auto",
-              bottom: -30,
-              right: 280,
+              top: 400,
+              left: "60%",
               w: 280,
               h: 260,
-              rot: "2.5deg",
+              rot: "-1.5deg",
               delay: 0.65,
               frontBg: "linear-gradient(135deg,#100A00,#0D0500)",
               frontTitle: "Best Chapter Region 8",
@@ -820,10 +821,8 @@ function AboutIEEE() {
               className="flip-card"
               style={{
                 position: "absolute",
-                top: c.top ?? undefined,
-                bottom: c.bottom ?? undefined,
-                left: c.left ?? undefined,
-                right: c.right ?? undefined,
+                top: c.top,
+                left: c.left,
                 width: c.w,
                 height: c.h,
                 transform: v
@@ -849,7 +848,7 @@ function AboutIEEE() {
                   <div
                     style={{
                       fontFamily: "'Bebas Neue'",
-                      fontSize: i === 0 ? 72 : 22,
+                      fontSize: i === 0 ? 64 : 20,
                       color: "var(--gold)",
                       textAlign: "center",
                       lineHeight: 1,
@@ -933,6 +932,148 @@ function AboutIEEE() {
           ))}
         </div>
 
+        {/* Mid screens: vertical stack on right — shown between 768px and 1400px */}
+        <div
+          className="flip-vertical"
+          style={{
+            display: "none",
+            flexDirection: "column",
+            gap: 14,
+            width: "100%",
+          }}
+        >
+          {[
+            {
+              img: imgIEEE_CS,
+              frontTitle: "CS",
+              frontSub: "Computer Society",
+              backTitle: "IEEE CS · UJ Branch",
+              backDesc: "Student-led club at University of Jordan since 2017.",
+            },
+            {
+              img: imgOutstanding,
+              frontTitle: "Outstanding Chapter",
+              frontSub: "2023 · 1st in Middle East",
+              backTitle: "Outstanding Chapter",
+              backDesc:
+                "First IEEE CS chapter in the Middle East to receive this honor.",
+            },
+            {
+              img: imgRegion_8,
+              frontTitle: "Best Chapter Region 8",
+              frontSub: "2024 · Bordeaux",
+              backTitle: "Region 8 Award",
+              backDesc: "IEEE Region 8 Award — Bordeaux, France 2024.",
+            },
+          ].map((c, i) => (
+            <div
+              key={i}
+              className="flip-card"
+              style={{
+                height: 160,
+                width: "100%",
+                opacity: v ? 1 : 0,
+                transform: v ? "translateY(0)" : "translateY(20px)",
+                transition: `all 0.8s ease ${0.2 + i * 0.15}s`,
+              }}
+            >
+              <div className="flip-inner">
+                <div
+                  className="flip-front"
+                  style={{
+                    background: "linear-gradient(135deg,#2A1500,#0D0500)",
+                    border: "1px solid rgba(245,166,35,0.14)",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 20,
+                    padding: "0 24px",
+                  }}
+                >
+                  <div
+                    style={{
+                      fontFamily: "'Bebas Neue'",
+                      fontSize: 36,
+                      color: "var(--gold)",
+                      lineHeight: 1,
+                      flexShrink: 0,
+                    }}
+                  >
+                    {c.frontTitle}
+                  </div>
+                  <div
+                    style={{
+                      fontFamily: "'DM Sans'",
+                      fontSize: 12,
+                      color: "var(--muted)",
+                    }}
+                  >
+                    {c.frontSub}
+                  </div>
+                </div>
+                <div
+                  className="flip-back"
+                  style={{
+                    border: "1px solid rgba(245,166,35,0.22)",
+                    background: "#0D0500",
+                  }}
+                >
+                  <img
+                    src={c.img}
+                    alt={c.backTitle}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      objectPosition: "center top",
+                      display: "block",
+                    }}
+                  />
+                  <div
+                    style={{
+                      position: "absolute",
+                      inset: 0,
+                      background:
+                        "linear-gradient(to bottom,rgba(0,0,0,0.1),rgba(8,3,0,0.9))",
+                      pointerEvents: "none",
+                    }}
+                  />
+                  <div
+                    style={{
+                      position: "absolute",
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      padding: "12px 16px",
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontFamily: "'Syne'",
+                        fontWeight: 700,
+                        fontSize: 12,
+                        color: "var(--gold)",
+                        marginBottom: 4,
+                      }}
+                    >
+                      {c.backTitle}
+                    </div>
+                    <div
+                      style={{
+                        fontFamily: "'DM Sans'",
+                        fontSize: 11,
+                        color: "rgba(245,235,220,0.75)",
+                        lineHeight: 1.6,
+                      }}
+                    >
+                      {c.backDesc}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
         {/* Mobile stacked */}
         <div
           className="flip-mobile"
@@ -966,7 +1107,7 @@ function AboutIEEE() {
                 borderRadius: 16,
                 overflow: "hidden",
                 position: "relative",
-                height: 180,
+                height: 160,
                 border: "1px solid rgba(245,166,35,0.14)",
                 opacity: v ? 1 : 0,
                 transform: v ? "translateY(0)" : "translateY(20px)",
