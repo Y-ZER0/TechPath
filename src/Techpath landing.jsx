@@ -952,6 +952,7 @@ function AboutIEEE() {
             },
             {
               img: imgOutstanding,
+              objectPosition: "10% 30%",
               frontTitle: "Outstanding Chapter",
               frontSub: "2023 · 1st in Middle East",
               backTitle: "Outstanding Chapter",
@@ -1024,7 +1025,7 @@ function AboutIEEE() {
                       width: "100%",
                       height: "100%",
                       objectFit: "cover",
-                      objectPosition: "center top",
+                      objectPosition: c.objectPosition || "center top",
                       display: "block",
                     }}
                   />
@@ -1087,16 +1088,19 @@ function AboutIEEE() {
           {[
             {
               img: imgIEEE_CS,
+              objectPosition: "10% 10%",
               title: "IEEE CS · UJ Branch",
               sub: "Student-led club at University of Jordan since 2017.",
             },
             {
               img: imgOutstanding,
+              objectPosition: "10% 25%",
               title: "Outstanding Chapter 2023",
               sub: "1st in the Middle East to receive this honor.",
             },
             {
               img: imgRegion_8,
+              objectPosition: "10% 40%",
               title: "Best Chapter Region 8",
               sub: "IEEE Region 8 Award — Bordeaux, France 2024.",
             },
@@ -1121,7 +1125,7 @@ function AboutIEEE() {
                   width: "100%",
                   height: "100%",
                   objectFit: "cover",
-                  objectPosition: "center top",
+                  objectPosition: c.objectPosition || "center top",
                 }}
               />
               <div
