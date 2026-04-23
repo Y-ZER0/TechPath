@@ -149,6 +149,34 @@ html,body{height:100%;overflow:hidden;}
   .flip-mobile{ display:flex !important; }
 }
 
+/* Breathing room between webinar sections */
+#webinar-cyber,
+#webinar-ai,
+#webinar-software {
+  padding-top: 100px;
+  padding-bottom: 100px;
+}
+
+/* Divider line between each webinar */
+#webinar-ai,
+#webinar-software {
+  border-top: 1px solid rgba(245,166,35,0.06);
+}
+
+/* ── Nav responsive ── */
+.nav-desktop  { display:flex !important; }
+.nav-hamburger{ display:none !important; }
+.nav-badge    { display:flex !important; }
+
+@media(max-width:768px){
+  .nav-desktop  { display:none !important; }
+  .nav-hamburger{ display:flex !important; }
+}
+
+@media(max-width:480px){
+  .nav-badge{ display:none !important; }
+}
+
 `;
 
 /* ══════════════════════════════════════════════════════════════════════════════
@@ -185,6 +213,7 @@ const scrollTo = (id) =>
 ══════════════════════════════════════════════════════════════════════════════ */
 function Hero() {
   const [step, setStep] = useState(0);
+  const [menuOpen, setMenuOpen] = useState(false);
   const canvasRef = useRef(null);
   const heroRef = useRef(null);
   useHeroCanvas(canvasRef, heroRef);
@@ -199,12 +228,20 @@ function Hero() {
   const T = ["T", "E", "C", "H"];
   const P = ["P", "A", "T", "H"];
 
+  const navLinks = [
+    { label: "About", id: "about" },
+    { label: "Event", id: "event" },
+    { label: "Cyber", id: "webinar-cyber" },
+    { label: "AI", id: "webinar-ai" },
+    { label: "Software", id: "webinar-software" },
+  ];
+
   const letter = (char, idx, offset, gold) => (
     <span
       key={idx}
       style={{
         fontFamily: "'Bebas Neue', sans-serif",
-        fontSize: "clamp(88px, 14vw, 180px)",
+        fontSize: "clamp(64px, 12vw, 180px)",
         lineHeight: 0.88,
         color: gold ? "var(--gold)" : "var(--cream)",
         display: "inline-block",
@@ -247,90 +284,217 @@ function Hero() {
         }}
       />
 
-      {/* NAV */}
+      {/* ── NAV ── */}
       <nav
         style={{
           position: "absolute",
           top: 0,
           left: 0,
           right: 0,
-          padding: "20px clamp(20px,5vw,48px)",
+          height: 60,
+          padding: "0 clamp(18px,4vw,48px)",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          flexWrap: "wrap",
-          gap: 12,
           opacity: step >= 1 ? 1 : 0,
           transition: "opacity 1s ease 0.5s",
-          zIndex: 10,
+          zIndex: 20,
           borderBottom: "1px solid rgba(245,166,35,0.05)",
+          background: "rgba(18,6,1,0.7)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
         }}
       >
+        {/* Logo */}
         <div
           style={{
             fontFamily: "'Bebas Neue'",
-            fontSize: 22,
+            fontSize: 20,
             color: "var(--gold)",
-            letterSpacing: "0.12em",
+            letterSpacing: "0.14em",
+            flexShrink: 0,
           }}
         >
           TECH PATH
         </div>
+
+        {/* Desktop links — centered */}
         <div
+          className="nav-desktop"
           style={{
             display: "flex",
-            gap: 28,
-            marginLeft: "auto",
-            marginRight: 48,
-            flexWrap: "wrap",
+            gap: "clamp(16px,2.5vw,32px)",
+            position: "absolute",
+            left: "50%",
+            transform: "translateX(-50%)",
           }}
         >
-          {[
-            { label: "About", id: "about" },
-            { label: "Event", id: "event" },
-            { label: "Cyber", id: "webinar-cyber" },
-            { label: "AI", id: "webinar-ai" },
-            { label: "Software", id: "webinar-software" },
-          ].map(({ label, id }) => (
-            <span key={label} className="nav-link" onClick={() => scrollTo(id)}>
+          {navLinks.map(({ label, id }) => (
+            <span
+              key={label}
+              className="nav-link"
+              onClick={() => {
+                scrollTo(id);
+                setMenuOpen(false);
+              }}
+            >
               {label}
             </span>
           ))}
         </div>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            padding: "6px 16px",
-            borderRadius: 100,
-            background: "rgba(245,166,35,0.06)",
-            border: "1px solid rgba(245,166,35,0.18)",
-          }}
-        >
+
+        {/* Right: badge + hamburger */}
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <div
+            className="nav-badge"
             style={{
-              width: 6,
-              height: 6,
-              borderRadius: "50%",
-              background: "var(--gold)",
-            }}
-          />
-          <span
-            style={{
-              fontFamily: "'DM Sans'",
-              fontSize: 11,
-              color: "var(--gold)",
-              letterSpacing: "0.12em",
+              display: "flex",
+              alignItems: "center",
+              gap: 7,
+              padding: "5px 14px",
+              borderRadius: 100,
+              background: "rgba(245,166,35,0.06)",
+              border: "1px solid rgba(245,166,35,0.18)",
             }}
           >
-            IEEE COMPUTER SOCIETY · UJ
-          </span>
+            <div
+              style={{
+                width: 6,
+                height: 6,
+                borderRadius: "50%",
+                background: "var(--gold)",
+              }}
+            />
+            <span
+              style={{
+                fontFamily: "'DM Sans'",
+                fontSize: 11,
+                color: "var(--gold)",
+                letterSpacing: "0.1em",
+                whiteSpace: "nowrap",
+              }}
+            >
+              IEEE CS · UJ
+            </span>
+          </div>
+
+          {/* Hamburger — NO inline display:none, CSS controls visibility */}
+          <button
+            className="nav-hamburger"
+            onClick={() => setMenuOpen((o) => !o)}
+            aria-label="Toggle menu"
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              padding: "8px 6px",
+              flexDirection: "column",
+              gap: 5,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <div
+              style={{
+                width: 22,
+                height: 2,
+                borderRadius: 2,
+                background: "var(--gold)",
+                transition: "all 0.3s ease",
+                transform: menuOpen
+                  ? "rotate(45deg) translate(0px, 7px)"
+                  : "none",
+              }}
+            />
+            <div
+              style={{
+                width: 22,
+                height: 2,
+                borderRadius: 2,
+                background: "var(--gold)",
+                transition: "all 0.3s ease",
+                opacity: menuOpen ? 0 : 1,
+                transform: menuOpen ? "scaleX(0)" : "none",
+              }}
+            />
+            <div
+              style={{
+                width: 22,
+                height: 2,
+                borderRadius: 2,
+                background: "var(--gold)",
+                transition: "all 0.3s ease",
+                transform: menuOpen
+                  ? "rotate(-45deg) translate(0px, -7px)"
+                  : "none",
+              }}
+            />
+          </button>
         </div>
       </nav>
 
-      {/* TITLE */}
-      <div style={{ textAlign: "center", position: "relative", zIndex: 2 }}>
+      {/* Mobile dropdown */}
+      <div
+        style={{
+          position: "absolute",
+          top: 60,
+          left: 0,
+          right: 0,
+          zIndex: 19,
+          background: "rgba(10,3,0,0.97)",
+          backdropFilter: "blur(16px)",
+          WebkitBackdropFilter: "blur(16px)",
+          borderBottom: menuOpen ? "1px solid rgba(245,166,35,0.1)" : "none",
+          overflow: "hidden",
+          maxHeight: menuOpen ? 400 : 0,
+          transition: "max-height 0.45s cubic-bezier(.22,1,.36,1)",
+          display: "flex",
+          flexDirection: "column",
+          pointerEvents: menuOpen ? "all" : "none",
+        }}
+      >
+        {navLinks.map(({ label, id }, i) => (
+          <div
+            key={id}
+            onClick={() => {
+              scrollTo(id);
+              setMenuOpen(false);
+            }}
+            style={{
+              fontFamily: "'Syne'",
+              fontWeight: 600,
+              fontSize: 15,
+              color: "var(--cream)",
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              padding: "16px clamp(18px,4vw,32px)",
+              borderBottom: "1px solid rgba(245,166,35,0.06)",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              opacity: menuOpen ? 1 : 0,
+              transform: menuOpen ? "translateX(0)" : "translateX(-14px)",
+              transition: `opacity 0.3s ease ${0.06 * i}s, transform 0.35s ease ${0.06 * i}s`,
+            }}
+          >
+            {label}
+            <span style={{ color: "var(--gold)", fontSize: 14, opacity: 0.5 }}>
+              →
+            </span>
+          </div>
+        ))}
+      </div>
+
+      {/* Title */}
+      <div
+        style={{
+          textAlign: "center",
+          position: "relative",
+          zIndex: 2,
+          padding: "0 16px",
+        }}
+      >
         <div style={{ display: "flex", justifyContent: "center" }}>
           {T.map((c, i) => letter(c, i, 0, i >= 2))}
         </div>
@@ -341,18 +505,18 @@ function Hero() {
         {step >= 7 && (
           <div
             style={{
-              marginTop: 28,
+              marginTop: 24,
               display: "flex",
-              gap: 20,
+              gap: 16,
               justifyContent: "center",
-              animation: "fadeSlideUp 0.8s ease forwards",
               flexWrap: "wrap",
+              animation: "fadeSlideUp 0.8s ease forwards",
             }}
           >
             <div
               style={{
                 height: 1,
-                width: 60,
+                width: 40,
                 background: "linear-gradient(to right,transparent,var(--gold))",
                 alignSelf: "center",
               }}
@@ -360,10 +524,11 @@ function Hero() {
             <p
               style={{
                 fontFamily: "'DM Sans'",
-                fontSize: 12,
+                fontSize: "clamp(10px,1.4vw,12px)",
                 color: "var(--muted)",
-                letterSpacing: "0.18em",
+                letterSpacing: "0.16em",
                 textTransform: "uppercase",
+                textAlign: "center",
               }}
             >
               27 – 29 April 2026 · Online Webinar Series
@@ -371,7 +536,7 @@ function Hero() {
             <div
               style={{
                 height: 1,
-                width: 60,
+                width: 40,
                 background: "linear-gradient(to left,transparent,var(--gold))",
                 alignSelf: "center",
               }}
@@ -382,38 +547,29 @@ function Hero() {
         {step >= 8 && (
           <div
             style={{
-              marginTop: 40,
+              marginTop: 36,
               display: "flex",
-              gap: 14,
               justifyContent: "center",
               animation: "fadeSlideUp 0.9s ease forwards",
             }}
           >
-            <a
-              href="https://docs.google.com/forms/d/e/1FAIpQLSdD9-UKrwKGjP43muLUPv7xmql-UV2ZxBRIPqlEsCPk_LjJzw/viewform"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ textDecoration: "none" }} // Ensures the link doesn't add an underline
+            <button
+              className="cta-btn"
+              style={{
+                background: "var(--gold)",
+                color: "#080300",
+                fontFamily: "'Syne'",
+                fontWeight: 700,
+                fontSize: "clamp(11px,1.5vw,13px)",
+                letterSpacing: "0.1em",
+                padding: "clamp(10px,2vw,14px) clamp(22px,4vw,36px)",
+                borderRadius: 100,
+                border: "none",
+                textTransform: "uppercase",
+              }}
             >
-              <button
-                className="cta-btn"
-                style={{
-                  background: "var(--gold)",
-                  color: "#080300",
-                  fontFamily: "'Syne'",
-                  fontWeight: 700,
-                  fontSize: 13,
-                  letterSpacing: "0.1em",
-                  padding: "14px 36px",
-                  borderRadius: 100,
-                  border: "none",
-                  textTransform: "uppercase",
-                  cursor: "pointer", // Added this so users know it's clickable
-                }}
-              >
-                Register Now
-              </button>
-            </a>
+              Register Now
+            </button>
           </div>
         )}
       </div>
