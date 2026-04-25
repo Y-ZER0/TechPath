@@ -553,23 +553,31 @@ function Hero() {
               animation: "fadeSlideUp 0.9s ease forwards",
             }}
           >
-            <button
-              className="cta-btn"
-              style={{
-                background: "var(--gold)",
-                color: "#080300",
-                fontFamily: "'Syne'",
-                fontWeight: 700,
-                fontSize: "clamp(11px,1.5vw,13px)",
-                letterSpacing: "0.1em",
-                padding: "clamp(10px,2vw,14px) clamp(22px,4vw,36px)",
-                borderRadius: 100,
-                border: "none",
-                textTransform: "uppercase",
-              }}
+            <a
+              href="https://docs.google.com/forms/d/e/1FAIpQLSdD9-UKrwKGjP43muLUPv7xmql-UV2ZxBRIPqlEsCPk_LjJzw/viewform"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ textDecoration: "none" }} // Ensures the link doesn't add an underline
             >
-              Register Now
-            </button>
+              <button
+                className="cta-btn"
+                style={{
+                  background: "var(--gold)",
+                  color: "#080300",
+                  fontFamily: "'Syne'",
+                  fontWeight: 700,
+                  fontSize: 13,
+                  letterSpacing: "0.1em",
+                  padding: "14px 36px",
+                  borderRadius: 100,
+                  border: "none",
+                  textTransform: "uppercase",
+                  cursor: "pointer", // Added this so users know it's clickable
+                }}
+              >
+                Register Now
+              </button>
+            </a>
           </div>
         )}
       </div>
